@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/.qmake.stash</file>
+        <file>images/awesome_face.png</file>
+        <file>images/awesome_face.xcf</file>
+        <file>images/eight_flat_button.png</file>
+        <file>images/five_flat_button.png</file>
+        <file>images/flag_no_flat_button.png</file>
+        <file>images/flat_button.png</file>
+        <file>images/four_flat_button.png</file>
+        <file>images/happy_face.png</file>
+        <file>images/legend.PNG</file>
+        <file>images/mine_disarmed_flat_button.png</file>
+        <file>images/mine_exploded_flat_button.png</file>
+        <file>images/mine_flat_button.png</file>
+        <file>images/mine_logo.png</file>
+        <file>images/normal_face.png</file>
+        <file>images/normalface.png</file>
+        <file>images/not_flat_button.png</file>
+        <file>images/one_flat_button.png</file>
+        <file>images/pink_unicorn.png</file>
+        <file>images/sad_face.png</file>
+        <file>images/scared_face.png</file>
+        <file>images/seven_flat_button.png</file>
+        <file>images/six_flat_button.png</file>
+        <file>images/three_flat_button.png</file>
+        <file>images/two_flat_button.png</file>
+        <file>images/unknown_no_flat_button.png</file>
+    </qresource>
+</RCC>
