@@ -18,8 +18,8 @@
 #include <QSignalMapper>
 #include "minesweeper.h"
 #include "minesweeperbutton.h"
+#include <QVector>
 
-//test111111111111111111111111516545485
 namespace Ui {
     class MainWindow;
 }
@@ -49,7 +49,14 @@ private:
     void lost();
     void won();
     void clear(int, int, bool);
-    int mineStatus[20][20];
+
+
+    int fieldHeight;
+    int fieldWidth;
+    int amountOfMines;
+    QVector< QVector<int> > mineStatus;
+    QVector< QVector<int> > createMineStatusVector(int fieldWidth, int fieldHeight);
+
     void changeIcon(MineSweeperButton*, int, int);
 
 

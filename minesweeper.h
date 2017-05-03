@@ -11,7 +11,7 @@ public:
     int getValue(int, int);
 private:
     void generateBoard();
-    int mineBoard[20][20];
+    int mineBoard[30][20];
 };
 
 #endif // MINESWEEPER_H
