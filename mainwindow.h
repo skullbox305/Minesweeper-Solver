@@ -46,6 +46,8 @@ private:
     int cellsRevealed;
     int minesFlagged;
     int flagsFlagged;
+
+    void initMainWindow(bool reinitialize);
     void lost();
     void won();
     void clear(int, int, bool);
@@ -54,8 +56,11 @@ private:
     int fieldHeight;
     int fieldWidth;
     int amountOfMines;
-    QVector< QVector<int> > mineStatus;
-    QVector< QVector<int> > createMineStatusVector(int fieldWidth, int fieldHeight);
+    QVector< QVector<int> > fieldStatus;
+    QVector< QVector<int> > mineBoard;
+    QVector< QVector<float> > probabilities;
+
+    void createGameVectors(int fieldWidth, int fieldHeight);
 
     void changeIcon(MineSweeperButton*, int, int);
 
@@ -71,6 +76,7 @@ private slots:
 public slots:
 
     void revealCell(QString);
+
 
 };
 

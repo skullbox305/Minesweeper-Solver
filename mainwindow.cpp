@@ -12,51 +12,57 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    ui->setupUi(this);
+    QMainWindow::resize(800,600);
+
     //Global variables
     hasFinished = false; //Has the game finished?
     cellsRevealed = 0; //Number of current cells revealed
     flagsFlagged = 0; //Number of flags that have been flagged
     minesFlagged = 0; //Number of mines that have been flagged
 
-    amountOfMines = 10;
-    fieldWidth = 30;
+    fieldWidth = 20;
     fieldHeight = 20;
-    mineStatus = createMineStatusVector(fieldWidth, fieldHeight);
-
-    ui->setupUi(this);
-    QMainWindow::resize(800,600);
+    amountOfMines = 10;
 
     //Layout designs
     ui->mineContainer->setSpacing(0); //Forces the board cells to be spaced next to each other
 
     //The display of the number of flags that have been put up (Mines left to solve)
-    ui->lcdFlagCount->display ( NUMBER_OF_MINES - flagsFlagged );
-
-    //Initialize statuses
-    // 0 = Empty, 1 = flagged, 2 = ?
-    for ( int i = 0; i < fieldHeight; i++)
-    {
-        for ( int j = 0; j < fieldHeight; j++)
-            mineStatus[i][j] = 0;
-    }
+    ui->lcdFlagCount->display ( amountOfMines - flagsFlagged );
 
     //Connect the UI elements
     connect(ui->action_Reset, SIGNAL(triggered()), this, SLOT(reset()));
     connect(ui->smileyFace, SIGNAL(clicked()), this, SLOT(handleSmileyFace()));
 
-    //Now handle the actual game.. enough of this extra feature stuff. Now for the real deal!
-    game = new Minesweeper();
 
     //We will need to map the click to an object's coordinates
     signalMapper = new QSignalMapper(this);
     signalMapper2 = new QSignalMapper(this);
 
-    //Generate all the buttons for the game
-   // ui->mineContainer->SetMinimumSize
-    for( int i = 0; i < fieldHeight; i++)
+
+    initMainWindow(false);
+
+    //Connect the signal mapper to this class so that we can handle its clicks
+    connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(revealCell(QString))); //Left click
+    connect(signalMapper2, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString))); //Right click
+}
+
+void MainWindow::initMainWindow(bool reinitialize)
+{
+    createGameVectors(fieldWidth, fieldHeight);
+
+    //Now handle the actual game.. enough of this extra feature stuff. Now for the real deal!
+    game = new Minesweeper(fieldWidth, fieldHeight, amountOfMines, mineBoard);
+
+    //Initialize statuses
+    // 0 = Empty, 1 = flagged, 2 = ?
+    for ( int i = 0; i < fieldHeight; i++)
     {
-        for( int j = 0; j < fieldWidth; j++ )
+        for ( int j = 0; j < fieldWidth; j++)
         {
+            fieldStatus[i][j] = 0;
+
             MineSweeperButton* button = new MineSweeperButton("");
 
             //Button Styling
@@ -65,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
             button->setMaximumWidth(30);
             button->setIcon (QIcon(QString(":/images/not_flat_button.png")));
             button->setIconSize (QSize(30,30));
+            //button->
 
             //Actually add the button to the container
             ui->mineContainer->addWidget(button, i, j);
@@ -81,26 +88,28 @@ MainWindow::MainWindow(QWidget *parent) :
             connect(button, SIGNAL(released()), this, SLOT(handleButtonReleased()));
         }
     }
-
-    //Connect the signal mapper to this class so that we can handle its clicks
-    connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(revealCell(QString))); //Left click
-    connect(signalMapper2, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString))); //Right click
 }
 
 
-QVector< QVector<int> > MainWindow::createMineStatusVector(int fieldWidth, int fieldHeight)
+void MainWindow::createGameVectors(int fieldWidth, int fieldHeight)
 {
     QVector< QVector<int> > result;
+    QVector< QVector<float> > result1;
 
     for(int i = 0; i < fieldHeight; i++)
     {
         result.append(QVector<int>());
+        result1.append(QVector<float>());
+
         for(int j = 0; j < fieldWidth; j++)
         {
             result[i].append(int());
+            result1[i].append(float());
         }
     }
-    return result;
+    fieldStatus = result;
+    mineBoard = result;
+    probabilities = result1;
 }
 
 
@@ -129,13 +138,13 @@ void MainWindow::hasRightClicked(QString coordinates)
     if (! buttonPushed->isFlat() )
     {
             //0 = flat, 1 = flat with flag, 2 = ?
-            if ( mineStatus[row][column] == BLANK_CELL)
+            if ( fieldStatus[row][column] == BLANK_CELL)
             {
                     //We are now flagging the cell as it was blank
                     flagsFlagged++;
 
                     buttonPushed->setIcon (QIcon(QString(":/images/flag_no_flat_button.png")));
-                    mineStatus[row][column] = FLAGGED_CELL;
+                    fieldStatus[row][column] = FLAGGED_CELL;
 
                     ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged );
 
@@ -144,19 +153,19 @@ void MainWindow::hasRightClicked(QString coordinates)
                         minesFlagged++;
                     }
 
-            } else if ( mineStatus[row][column] == FLAGGED_CELL )
+            } else if ( fieldStatus[row][column] == FLAGGED_CELL )
             {
                 //We are now making the thing a question mark
                 flagsFlagged--;
                 ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged ); //No longer flagged so we are going back up
 
                 buttonPushed->setIcon (QIcon(":/images/unknown_no_flat_button.png"));
-                mineStatus[row][column] = QUESTION_CELL;
-            } else if ( mineStatus[row][column] == QUESTION_CELL )
+                fieldStatus[row][column] = QUESTION_CELL;
+            } else if ( fieldStatus[row][column] == QUESTION_CELL )
             {
                 ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged );
                 buttonPushed->setIcon (QIcon(QString(":/images/not_flat_button.png")));
-                mineStatus[row][column] = BLANK_CELL;
+                fieldStatus[row][column] = BLANK_CELL;
             }
     } else {
         //The cell has been pushed now
@@ -191,7 +200,7 @@ void MainWindow::revealCell(QString coordinates)
     }
 
     //If it is flagged, we will ignore the mine
-    if ( mineStatus[row][column] == FLAGGED_CELL || mineStatus[row][column] == QUESTION_CELL )
+    if ( fieldStatus[row][column] == FLAGGED_CELL || fieldStatus[row][column] == QUESTION_CELL )
     {
             cellsRevealed--;
             return;
@@ -296,7 +305,7 @@ void MainWindow::clear(int row, int column, bool allowedClear)
     MineSweeperButton *buttonPushed = qobject_cast<MineSweeperButton *>(signalMapper->mapping(coordinates));
 
     //Ensure that the button is not flat, that the value is not a mine, that it is allowed to clear (not something that isn't a zero) and it isn't flagged
-    if ( buttonPushed->isFlat () == false && game->getValue (row, column) != MINE && allowedClear == true && mineStatus[row][column] != FLAGGED_CELL)
+    if ( buttonPushed->isFlat () == false && game->getValue (row, column) != MINE && allowedClear == true && fieldStatus[row][column] != FLAGGED_CELL)
     {
         buttonPushed->setFlat (true); //We're now flat
 
@@ -372,7 +381,7 @@ void MainWindow::lost() {
                 button->setFlat (true);
 
                 //Are we flagged? Good job! you find a mine and flagged it :)
-                if ( mineStatus[i][j] == FLAGGED_CELL ) {
+                if ( fieldStatus[i][j] == FLAGGED_CELL ) {
                     button->setIcon (QIcon(QString(":/images/mine_disarmed_flat_button.png")));
                 } else {
                     //BOO!! You didn't find this mine!
@@ -403,7 +412,7 @@ void MainWindow::reset() {
     ui->smileyFace->setIcon(QIcon(":/images/normal_face.png"));
 
     //Create a new game object
-    game = new Minesweeper();
+    //game = new Minesweeper(fieldWidth, fieldHeight, amountOfMines, mineBoard);
 
     //Go through all the cells and reset the icons
     for( int i = 0; i < fieldHeight; i++)
@@ -413,12 +422,16 @@ void MainWindow::reset() {
             QString coordinates = QString::number(i)+","+QString::number(j);
             MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapper->mapping(coordinates));
 
-            button->setIcon (QIcon(":/images/not_flat_button.png"));
-            button->setIconSize (QSize(30,30));
-            button->setFlat(false);
-            mineStatus[i][j] = BLANK_CELL;
+            delete button;
+//            button->setIcon (QIcon(":/images/not_flat_button.png"));
+//            button->setIconSize (QSize(30,30));
+//            button->setFlat(false);
+//            fieldStatus[i][j] = BLANK_CELL;
         }
     }
+    fieldHeight = 10;
+    fieldWidth = 10;
+    initMainWindow(false);
 }
 
 /**
