@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lcdFlagCount->display ( amountOfMines - flagsFlagged );
 
     //Connect the UI elements
-    connect(ui->action_Reset, SIGNAL(triggered()), this, SLOT(reset()));
+    connect(ui->NewGame, SIGNAL(pressed()), this, SLOT(reset()));
     connect(ui->smileyFace, SIGNAL(clicked()), this, SLOT(handleSmileyFace()));
 
 
@@ -429,8 +429,9 @@ void MainWindow::reset() {
 //            fieldStatus[i][j] = BLANK_CELL;
         }
     }
-    fieldHeight = 10;
-    fieldWidth = 10;
+    fieldHeight = ui->hoehe->text().toInt();
+    fieldWidth = ui->breite->text().toInt();
+    amountOfMines = ui->anzahlMinen->text().toInt();
     initMainWindow(false);
 }
 
