@@ -141,7 +141,7 @@
          <x>0</x>
          <y>0</y>
          <width>967</width>
-         <height>690</height>
+         <height>682</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0,0">
@@ -195,23 +195,16 @@
          <number>10</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="erster_klick_sicher">
+         <widget class="QCheckBox" name="firstClickSafe">
           <property name="text">
            <string>1. Klick Sicher</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="zeige_minen">
+         <widget class="QCheckBox" name="showMines">
           <property name="text">
-           <string>Zeige minen</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="zeige_wahrscheinlichkeiten">
-          <property name="text">
-           <string>Zeige Wahrscheinlichkeit</string>
+           <string>Zeige Minen</string>
           </property>
          </widget>
         </item>
@@ -353,6 +346,9 @@
       </item>
       <item row="0" column="4">
        <widget class="QToolButton" name="NewGame">
+        <property name="toolTip">
+         <string/>
+        </property>
         <property name="text">
          <string>Neues Spiel</string>
         </property>

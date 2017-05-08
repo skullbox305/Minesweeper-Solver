@@ -37,8 +37,9 @@ protected:
 private:
     Ui::MainWindow *ui;
     Minesweeper *game;
-    QSignalMapper *signalMapper;
-    QSignalMapper *signalMapper2;
+    QSignalMapper *signalMapperLeftClick;
+    QSignalMapper *signalMapperRightClick;
+    QSignalMapper *signalMapperShowMines;
 
     int currentTime;
     bool hasStarted;
@@ -47,12 +48,6 @@ private:
     int minesFlagged;
     int flagsFlagged;
 
-    void initMainWindow(bool reinitialize);
-    void lost();
-    void won();
-    void clear(int, int, bool);
-
-
     int fieldHeight;
     int fieldWidth;
     int amountOfMines;
@@ -60,10 +55,12 @@ private:
     QVector< QVector<int> > mineBoard;
     QVector< QVector<float> > probabilities;
 
+    void initMainWindow(bool reinitialize);
+    void lost();
+    void won();
+    void clear(int, int, bool);
     void createGameVectors(int fieldWidth, int fieldHeight);
-
     void changeIcon(MineSweeperButton*, int, int);
-
 
 private slots:
     void hasRightClicked(QString);
@@ -71,11 +68,12 @@ private slots:
     void handleSmileyFace();
     void handleButtonPressed();
     void handleButtonReleased();
-    //void revealAll(QString);
+    void setButtonTooltip(int xCoordinate, int yCoordinate);
 
 public slots:
 
     void revealCell(QString);
+    void showMinesIfChecked();
 
 
 };

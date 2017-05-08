@@ -9,18 +9,20 @@ class Minesweeper
 public:
     Minesweeper(int width, int height, int mineAmount, QVector< QVector<int> > &board);
     ~Minesweeper();
+    void generateBoard(bool firstClickSafe, int xFirstClick, int yFirstClick);
     bool isMine(int, int);
     int getValue(int, int);
+    float getProbability(int, int);
 private:
-    void generateBoard();
-    //int mineBoard[20][20];
+
+    void calculateProbabilities();
 
     int fieldHeight;
     int fieldWidth;
     int amountOfMines;
 
     QVector< QVector<int> > mineBoard;
-//    QVector< QVector<int> > createMineStatusVector(int fieldWidth, int fieldHeight);
+
 };
 
 #endif // MINESWEEPER_H
