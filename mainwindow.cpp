@@ -17,10 +17,11 @@ MainWindow::MainWindow(QWidget *parent) :
     amountOfMines = 10;
 
     ui->setupUi(this);
-    QMainWindow::resize(800,800);
+    QMainWindow::resize(900, 800);
 
     //Layout designs
-    ui->mineContainer->setSpacing(3); //Forces the board cells to be spaced next to each other
+    ui->mineContainer->setSpacing(1); //Forces the board cells to be spaced next to each other
+
 
     //The display of the number of flags that have been put up (Mines left to solve)
     ui->lcdFlagCount->display ( amountOfMines - flagsFlagged );
@@ -71,10 +72,11 @@ void MainWindow::initMainWindow(bool reinitialize)
 
             //Button Styling
             button->setAttribute(Qt::WA_LayoutUsesWidgetRect); //Forces Mac OS X styled minesweeper to look like linux/windows
-            button->setMaximumHeight(20);
-            button->setMaximumWidth(20);
-            button->setIcon (QIcon(QString(":/images/not_flat_button.png")));
-            button->setIconSize (QSize(20,20));
+            button->setMaximumHeight(30);
+            button->setMaximumWidth(30);
+            //button->setIcon (QIcon(QString(":/images/not_flat_button.png")));
+            button->setIconSize (QSize(30,30));
+            button->setStyleSheet("background-color: rgb(85, 170, 255)");
 
 
 
@@ -149,7 +151,7 @@ void MainWindow::hasRightClicked(QString coordinates)
             //We are now flagging the cell as it was blank
             flagsFlagged++;
 
-            buttonPushed->setIcon (QIcon(QString(":/images/flag_no_flat_button.png")));
+            buttonPushed->setText(QString("⚑"));
             fieldStatus[row][column] = FLAGGED_CELL;
 
             ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged );
@@ -165,12 +167,12 @@ void MainWindow::hasRightClicked(QString coordinates)
             flagsFlagged--;
             ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged ); //No longer flagged so we are going back up
 
-            buttonPushed->setIcon (QIcon(":/images/unknown_no_flat_button.png"));
+            buttonPushed->setText(QString("?"));
             fieldStatus[row][column] = QUESTION_CELL;
         } else if ( fieldStatus[row][column] == QUESTION_CELL )
         {
             ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged );
-            buttonPushed->setIcon (QIcon(QString(":/images/not_flat_button.png")));
+            buttonPushed->setText(QString(""));
             fieldStatus[row][column] = BLANK_CELL;
         }
     } else {
@@ -275,33 +277,42 @@ void MainWindow::changeIcon(MineSweeperButton *buttonPushed, int row, int column
     //Set the image according to the value of the cell
     if ( game->getValue (row, column) == 0)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/flat_button.png")));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212)");
     } else if ( game->getValue (row,column) == 1)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/one_flat_button.png")));
+        buttonPushed->setText(QString("1"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(0,0,255); font: 12pt 'Arial'");
     } else if (game->getValue (row,column) == 2)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/two_flat_button.png")));
+        buttonPushed->setText(QString("2"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(0,150,0); font: 12pt 'Arial'");
     } else if (game->getValue (row,column) == 3)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/three_flat_button.png")));
+        buttonPushed->setText(QString("3"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(255,0,0); font: 12pt 'Arial'");
     } else if (game->getValue (row,column) == 4)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/four_flat_button.png")));
+        buttonPushed->setText(QString("4"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(0,200,0); font: 12pt 'Arial'");
     } else if (game->getValue (row,column) == 5)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/five_flat_button.png")));
+        buttonPushed->setText(QString("5"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(130,0,195); font: 12pt 'Arial'");
     } else if (game->getValue (row,column) == 6)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/six_flat_button.png")));
+        buttonPushed->setText(QString("6"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(85, 71, 71); font: 12pt 'Arial'");
     } else if (game->getValue (row,column) == 7)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/seven_flat_button.png")));
+        buttonPushed->setText(QString("7"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(85, 71, 71); font: 12pt 'Arial'");
     } else if (game->getValue (row,column) == 8)
     {
-        buttonPushed->setIcon (QIcon(QString(":/images/eight_flat_button.png")));
+        buttonPushed->setText(QString("8"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(131, 9, 9); font: 12pt 'Arial'");
     } else if (game->getValue(row, column) == MINE) {
-        buttonPushed->setIcon (QIcon(QString(":/images/mine_exploded_flat_button.png")));
+        buttonPushed->setText(QString("◼"));
+        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(255,0,0)");
     }
 }
 
@@ -309,36 +320,27 @@ void MainWindow::showMinesIfChecked()
 {
     if(hasStarted)
     {
-        if(ui->showMines->isChecked())
+        for ( int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++ )
         {
-            for ( int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++ )
+            for ( int yCoordinate = 0; yCoordinate < fieldWidth; yCoordinate++ )
             {
-                for ( int yCoordinate = 0; yCoordinate < fieldWidth; yCoordinate++ )
+                if(game->getValue(xCoordinate, yCoordinate) == MINE)
                 {
-                    if(game->getValue(xCoordinate, yCoordinate) == MINE)
+                    QString coordinates = QString::number(xCoordinate)+","+QString::number(yCoordinate);
+                    MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
+                    if(ui->showMines->isChecked())
                     {
-                        QString coordinates = QString::number(xCoordinate)+","+QString::number(yCoordinate);
-                        MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
-                        button->setIcon (QIcon(QString(":/images/mine_flat_button.png")));
-                    }
-                }
-            }
-        } else
-        {
-            for ( int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++ )
-            {
-                for ( int yCoordinate = 0; yCoordinate < fieldWidth; yCoordinate++ )
-                {
-                    if(game->getValue(xCoordinate, yCoordinate) == MINE)
-                    {
-                        QString coordinates = QString::number(xCoordinate)+","+QString::number(yCoordinate);
-                        MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
-                        button->setIcon (QIcon(QString(":/images/not_flat_button.png")));
+                        button->setText(QString("◼"));
+                        button->setStyleSheet("background-color: rgb(85, 170, 255);");
+                    } else                    {
+                        button->setText(QString(""));
+                        button->setStyleSheet("background-color: rgb(85, 170, 255);");
                     }
                 }
             }
         }
     }
+
 }
 
 /**
@@ -433,10 +435,11 @@ void MainWindow::lost() {
 
                 //Are we flagged? Good job! you find a mine and flagged it :)
                 if ( fieldStatus[i][j] == FLAGGED_CELL ) {
-                    button->setIcon (QIcon(QString(":/images/mine_disarmed_flat_button.png")));
+                    button->setText(QString("◻"));
+                    button->setStyleSheet("background-color: rgb(212, 212, 212);");
                 } else {
                     //BOO!! You didn't find this mine!
-                    button->setIcon (QIcon(QString(":/images/mine_flat_button.png")));
+                    button->setText(QString("◼"));
                 }
             }
 
@@ -474,11 +477,6 @@ void MainWindow::reset() {
             MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
 
             delete button;
-
-            //            button->setIcon (QIcon(":/images/not_flat_button.png"));
-            //            button->setIconSize (QSize(30,30));
-            //            button->setFlat(false);
-            //            fieldStatus[i][j] = BLANK_CELL;
         }
     }
 
@@ -515,7 +513,8 @@ void MainWindow::won()
             if (! button->isFlat () && game->getValue(i, j) == MINE )
             {
                 button->setFlat (true);
-                button->setIcon (QIcon(QString(":/images/mine_disarmed_flat_button.png")));
+                button->setText(QString("◼"));
+                button->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(0,150,0);");
             }
 
         }

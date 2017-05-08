@@ -123,6 +123,9 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
      <widget class="QScrollArea" name="scrollArea">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
@@ -153,7 +156,7 @@
           <item row="0" column="1">
            <layout class="QGridLayout" name="mineContainer" rowstretch="0" columnstretch="0">
             <property name="sizeConstraint">
-             <enum>QLayout::SetFixedSize</enum>
+             <enum>QLayout::SetDefaultConstraint</enum>
             </property>
             <property name="leftMargin">
              <number>5</number>
@@ -286,7 +289,7 @@
            </size>
           </property>
           <property name="text">
-           <string>10</string>
+           <string>30</string>
           </property>
          </widget>
         </item>
@@ -306,7 +309,7 @@
            </size>
           </property>
           <property name="text">
-           <string>10</string>
+           <string>24</string>
           </property>
          </widget>
         </item>
@@ -326,7 +329,7 @@
            </size>
           </property>
           <property name="text">
-           <string>10</string>
+           <string>50</string>
           </property>
          </widget>
         </item>
