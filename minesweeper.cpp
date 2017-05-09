@@ -47,10 +47,7 @@ void Minesweeper::generateBoard(bool firstClickSafe, int xFirstClick, int yFirst
             yCoordinate = qrand() % fieldWidth;
         }while ( (mineBoard[xCoordinate][yCoordinate] == MINE) || ( (firstClickSafe && (xCoordinate == xFirstClick) && (yCoordinate == yFirstClick)) ));
 
-        if(firstClickSafe)
-        {
 
-        }
         mineBoard[xCoordinate][yCoordinate] = MINE; //Number 9 indiciates a mine
 
         //Now that we have a mine created, increment its surroundings

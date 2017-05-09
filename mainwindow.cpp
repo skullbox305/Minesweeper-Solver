@@ -12,23 +12,23 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    fieldWidth = 30;
-    fieldHeight = 24;
+    fieldWidth = 10;
+    fieldHeight = 10;
     amountOfMines = 10;
 
+    buttonStyleFlatBlue = "background-color: rgb(111, 193, 255); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;";
+    buttonStyleFlatGrey = "background-color: rgb(212, 212, 212); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;";
+    buttonFontSmall = "font: 10pt 'Arial';";
+    buttonFontBig = "font: 12pt 'Arial';";
+
     ui->setupUi(this);
-    QMainWindow::resize(900, 800);
+    QMainWindow::resize(900,850);
 
     //Layout designs
-    ui->mineContainer->setSpacing(1); //Forces the board cells to be spaced next to each other
-
-
-    //The display of the number of flags that have been put up (Mines left to solve)
-    ui->lcdFlagCount->display ( amountOfMines - flagsFlagged );
+    ui->mineContainer->setSpacing(2); //Forces the board cells to be spaced next to each other
 
     //Connect the UI elements
-    connect(ui->NewGame, SIGNAL(pressed()), this, SLOT(reset()));
-    connect(ui->smileyFace, SIGNAL(clicked()), this, SLOT(handleSmileyFace()));
+    connect(ui->newGame, SIGNAL(pressed()), this, SLOT(reset()));
     connect(ui->showMines, SIGNAL(clicked()), this, SLOT(showMinesIfChecked()));
 
 
@@ -37,12 +37,11 @@ MainWindow::MainWindow(QWidget *parent) :
     signalMapperRightClick = new QSignalMapper(this);
     signalMapperShowMines = new QSignalMapper(this);
 
-    initMainWindow(false);
-
     //Connect the signal mapper to this class so that we can handle its clicks
     connect(signalMapperLeftClick, SIGNAL(mapped(QString)), this, SLOT(revealCell(QString)));
     connect(signalMapperRightClick, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString)));
 
+    initMainWindow(false);
 }
 
 void MainWindow::initMainWindow(bool reinitialize)
@@ -54,6 +53,12 @@ void MainWindow::initMainWindow(bool reinitialize)
     flagsFlagged = 0; //Number of flags that have been flagged
     minesFlagged = 0; //Number of mines that have been flagged
 
+    //The display of the number of flags that have been put up (Mines left to solve)
+    ui->lcdFlagCount->display ( amountOfMines - flagsFlagged );
+    //Verloren oder Game Over Text löschen
+    ui->gameStatus->setText(QString(""));
+
+    //Create Vectors with the given size
     createGameVectors(fieldWidth, fieldHeight);
 
     //Now handle the actual game.. enough of this extra feature stuff. Now for the real deal!
@@ -71,12 +76,12 @@ void MainWindow::initMainWindow(bool reinitialize)
             MineSweeperButton* button = new MineSweeperButton("");
 
             //Button Styling
-            button->setAttribute(Qt::WA_LayoutUsesWidgetRect); //Forces Mac OS X styled minesweeper to look like linux/windows
-            button->setMaximumHeight(30);
-            button->setMaximumWidth(30);
-            //button->setIcon (QIcon(QString(":/images/not_flat_button.png")));
-            button->setIconSize (QSize(30,30));
-            button->setStyleSheet("background-color: rgb(85, 170, 255)");
+            //button->setAttribute(Qt::WA_LayoutUsesWidgetRect); //Forces Mac OS X styled minesweeper to look like linux/windows
+            button->setMaximumHeight(50);
+            button->setMaximumWidth(50);
+            button->setIconSize (QSize(50,50));
+            button->setStyleSheet(buttonStyleFlatBlue);
+
 
 
 
@@ -152,6 +157,7 @@ void MainWindow::hasRightClicked(QString coordinates)
             flagsFlagged++;
 
             buttonPushed->setText(QString("⚑"));
+            buttonPushed->setStyleSheet("background-color: rgb(231, 197, 77); color: rgb(199, 0, 0); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
             fieldStatus[row][column] = FLAGGED_CELL;
 
             ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged );
@@ -168,11 +174,23 @@ void MainWindow::hasRightClicked(QString coordinates)
             ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged ); //No longer flagged so we are going back up
 
             buttonPushed->setText(QString("?"));
+            buttonPushed->setStyleSheet("background-color: rgb(169, 225, 70); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
+
             fieldStatus[row][column] = QUESTION_CELL;
         } else if ( fieldStatus[row][column] == QUESTION_CELL )
         {
             ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged );
-            buttonPushed->setText(QString(""));
+            if(ui->showMines->isChecked())
+            {
+                buttonPushed->setText(QString("💣"));
+                buttonPushed->setStyleSheet(buttonStyleFlatBlue + buttonFontSmall);
+            }
+            else
+            {
+                buttonPushed->setText(QString(""));
+                buttonPushed->setStyleSheet(buttonStyleFlatBlue);
+            }
+
             fieldStatus[row][column] = BLANK_CELL;
         }
     } else {
@@ -251,7 +269,7 @@ void MainWindow::revealCell(QString coordinates)
     //Set the image according to the value of the cell
     changeIcon(buttonPushed, xCoordinate, yCoordinate);
 
-    buttonPushed->setFlat(true);    // if revealed, set button flat
+    buttonPushed->setFlat(true);    // if revealed, set button flat !"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     //If we reveal a mine, we just lost :(
     if ( game->isMine( xCoordinate, yCoordinate ) )
@@ -259,9 +277,6 @@ void MainWindow::revealCell(QString coordinates)
         lost();
         cellsRevealed--;
         return;
-    } else {
-        //Phew, it's not a mine! We're happy!!!!!!! :D
-        ui->smileyFace->setIcon(QIcon(":/images/normal_face.png"));
     }
 }
 
@@ -274,45 +289,48 @@ void MainWindow::revealCell(QString coordinates)
   */
 void MainWindow::changeIcon(MineSweeperButton *buttonPushed, int row, int column)
 {
+
+
     //Set the image according to the value of the cell
     if ( game->getValue (row, column) == 0)
     {
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212)");
+        buttonPushed->setText(QString(" "));
+        buttonPushed->setStyleSheet(buttonStyleFlatGrey);
     } else if ( game->getValue (row,column) == 1)
     {
         buttonPushed->setText(QString("1"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(0,0,255); font: 12pt 'Arial'");
+        buttonPushed->setStyleSheet("color: rgb(0,0,255);" + buttonStyleFlatGrey + buttonFontBig);
     } else if (game->getValue (row,column) == 2)
     {
         buttonPushed->setText(QString("2"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(0,150,0); font: 12pt 'Arial'");
+        buttonPushed->setStyleSheet("color: rgb(0,150,0);" + buttonStyleFlatGrey + buttonFontBig);
     } else if (game->getValue (row,column) == 3)
     {
         buttonPushed->setText(QString("3"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(255,0,0); font: 12pt 'Arial'");
+        buttonPushed->setStyleSheet("color: rgb(255,0,0);" + buttonStyleFlatGrey + buttonFontBig);
     } else if (game->getValue (row,column) == 4)
     {
         buttonPushed->setText(QString("4"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(0,200,0); font: 12pt 'Arial'");
+        buttonPushed->setStyleSheet("color: rgb(0,200,0);" + buttonStyleFlatGrey + buttonFontBig);
     } else if (game->getValue (row,column) == 5)
     {
         buttonPushed->setText(QString("5"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(130,0,195); font: 12pt 'Arial'");
+        buttonPushed->setStyleSheet("color: rgb(130,0,195);" + buttonStyleFlatGrey + buttonFontBig);
     } else if (game->getValue (row,column) == 6)
     {
         buttonPushed->setText(QString("6"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(85, 71, 71); font: 12pt 'Arial'");
+        buttonPushed->setStyleSheet("color: rgb(85, 71, 71);" + buttonStyleFlatGrey + buttonFontBig);
     } else if (game->getValue (row,column) == 7)
     {
         buttonPushed->setText(QString("7"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(85, 71, 71); font: 12pt 'Arial'");
+        buttonPushed->setStyleSheet("color: rgb(85, 71, 71);" + buttonStyleFlatGrey + buttonFontBig);
     } else if (game->getValue (row,column) == 8)
     {
         buttonPushed->setText(QString("8"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(131, 9, 9); font: 12pt 'Arial'");
+        buttonPushed->setStyleSheet("color: rgb(131, 9, 9);" + buttonStyleFlatGrey + buttonFontBig);
     } else if (game->getValue(row, column) == MINE) {
-        buttonPushed->setText(QString("◼"));
-        buttonPushed->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(255,0,0)");
+        buttonPushed->setText(QString("💣"));
+        buttonPushed->setStyleSheet("color: rgb(255,0,0);" + buttonStyleFlatGrey + buttonFontSmall);
     }
 }
 
@@ -330,11 +348,11 @@ void MainWindow::showMinesIfChecked()
                     MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
                     if(ui->showMines->isChecked())
                     {
-                        button->setText(QString("◼"));
-                        button->setStyleSheet("background-color: rgb(85, 170, 255);");
+                        button->setText(QString("💣"));
+                        button->setStyleSheet(buttonStyleFlatBlue + buttonFontSmall);
                     } else                    {
                         button->setText(QString(""));
-                        button->setStyleSheet("background-color: rgb(85, 170, 255);");
+                        button->setStyleSheet(buttonStyleFlatBlue);
                     }
                 }
             }
@@ -416,8 +434,9 @@ void MainWindow::clear(int row, int column, bool allowedClear)
   * Handles losing the game
   */
 void MainWindow::lost() {
-    ui->smileyFace->setIcon(QIcon(":/images/sad_face.png")); //I HAS THE SADS :(
     hasFinished = true;
+    ui->gameStatus->setText(QString("FAIL"));
+    ui->gameStatus->setStyleSheet("color: rgb(255,0,0); font: 75 20pt 'Arial'");
 
     //Go through all the cells and reveal all the mines
     for ( int i = 0; i < fieldHeight; i++ )
@@ -435,11 +454,12 @@ void MainWindow::lost() {
 
                 //Are we flagged? Good job! you find a mine and flagged it :)
                 if ( fieldStatus[i][j] == FLAGGED_CELL ) {
-                    button->setText(QString("◻"));
-                    button->setStyleSheet("background-color: rgb(212, 212, 212);");
+                    button->setText(QString("💣"));
+                    button->setStyleSheet("color: rgb(0,150,0);" + buttonStyleFlatGrey + buttonFontSmall);
                 } else {
                     //BOO!! You didn't find this mine!
-                    button->setText(QString("◼"));
+                    button->setText(QString("💣"));
+                    button->setStyleSheet("color: rgb(0,0,0);" + buttonStyleFlatGrey + buttonFontSmall);
                 }
             }
 
@@ -462,12 +482,6 @@ void MainWindow::reset() {
     minesFlagged = 0;
 
 
-    //Reset smiley to :)
-    ui->smileyFace->setIcon(QIcon(":/images/normal_face.png"));
-
-    //Create a new game object
-    //game = new Minesweeper(fieldWidth, fieldHeight, amountOfMines, mineBoard);
-
     //Go through all the cells and reset the icons
     for( int i = 0; i < fieldHeight; i++)
     {
@@ -481,13 +495,45 @@ void MainWindow::reset() {
     }
 
 
-
     fieldHeight = ui->hoehe->text().toInt();
     fieldWidth = ui->breite->text().toInt();
     amountOfMines = ui->anzahlMinen->text().toInt();
 
+    if(fieldWidth > 30)
+    {
+        QMessageBox messageBox;
+        messageBox.information(0, "Eingabefehler", "Wert für die Feldbreite ist zu hoch. Maximal: 30");
+        messageBox.setFixedSize(600,300);
+        ui->breite->setText("30");
+        fieldWidth = 30;
+        ui->newGame->setDown(false);
+    }
+
+    if(fieldHeight > 24)
+    {
+        QMessageBox messageBox;
+        messageBox.information(0, "Eingabefehler", "Wert für die Feldhöhe ist zu hoch. Maximal: 24");
+        messageBox.setFixedSize(600,300);
+        ui->hoehe->setText("24");
+        fieldHeight = 24;
+        ui->newGame->setDown(false);
+    }
+
+    if( ((fieldHeight * fieldWidth) * 0.927) < amountOfMines )
+    {
+        QMessageBox messageBox;
+        int mineAmount =  (fieldHeight * fieldWidth) * 0.927;
+        messageBox.information(0, "Eingabefehler", "Minenanzahl zu hoch. Maximal 92% des Feldes dürfen Minen sein. Neuer Wert: " + QString::number(mineAmount));
+        messageBox.setFixedSize(600,300);
+        ui->anzahlMinen->setText(QString::number(mineAmount));
+        amountOfMines = mineAmount;
+        ui->newGame->setDown(false);
+
+    }
+
 
     initMainWindow(false);
+
 }
 
 /**
@@ -496,11 +542,8 @@ void MainWindow::reset() {
   */
 void MainWindow::won()
 {
-    //Happy smiley face!!! :D
-    ui->smileyFace->setIcon(QIcon(":/images/happy_face.png"));
-
-    //Stop the timer, we're done
-    hasFinished = true;
+    ui->gameStatus->setText(QString("Gewonnen"));
+    ui->gameStatus->setStyleSheet("color: rgb(0,150,0); font: 75 20pt 'Arial'");
 
     //Set all the mines to disarmed
     for ( int i = 0; i < fieldHeight; i++ )
@@ -513,26 +556,14 @@ void MainWindow::won()
             if (! button->isFlat () && game->getValue(i, j) == MINE )
             {
                 button->setFlat (true);
-                button->setText(QString("◼"));
-                button->setStyleSheet("background-color: rgb(212, 212, 212); color: rgb(0,150,0);");
+                button->setText(QString("💣"));
+                button->setStyleSheet("color: rgb(0,150,0);" + buttonStyleFlatGrey + buttonFontSmall);
             }
 
         }
     }
-
-    //Show the save the score screen
-    //SaveScore* scoreScreen = new SaveScore(this->currentTime);
-    //scoreScreen->show();
 }
 
-/**
-  * handleSmileyFace()
-  * Handles the smiley face when clicked which is reset the board
-  */
-void MainWindow::handleSmileyFace()
-{
-    this->reset();
-}
 
 /**
   * handleButtonPressed()
@@ -545,9 +576,6 @@ void MainWindow::handleButtonPressed()
     {
         return;
     }
-
-    ui->smileyFace->setIcon(QIcon(":/images/scared_face.png")); //Oh my.. the suspense is building! :o
-
 }
 
 
@@ -560,8 +588,6 @@ void MainWindow::handleButtonReleased()
     if (hasFinished) {
         return;
     }
-
-    ui->smileyFace->setIcon(QIcon(":/images/normal_face.png")); //Phew didn't click on that!
 }
 
 void MainWindow::setButtonTooltip(int xCoordinate, int yCoordinate)

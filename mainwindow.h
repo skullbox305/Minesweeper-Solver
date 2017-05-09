@@ -19,6 +19,7 @@
 #include "minesweeper.h"
 #include "minesweeperbutton.h"
 #include <QVector>
+#include <QMessageBox>
 
 namespace Ui {
     class MainWindow;
@@ -40,6 +41,11 @@ private:
     QSignalMapper *signalMapperLeftClick;
     QSignalMapper *signalMapperRightClick;
     QSignalMapper *signalMapperShowMines;
+
+    QString buttonStyleFlatBlue;
+    QString buttonStyleFlatGrey;
+    QString buttonFontSmall;
+    QString buttonFontBig;
 
     int currentTime;
     bool hasStarted;
@@ -65,7 +71,6 @@ private:
 private slots:
     void hasRightClicked(QString);
     void reset();
-    void handleSmileyFace();
     void handleButtonPressed();
     void handleButtonReleased();
     void setButtonTooltip(int xCoordinate, int yCoordinate);

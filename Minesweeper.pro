@@ -13,4 +13,5 @@ HEADERS += mainwindow.h \
     minesweeper.h \
     minesweeperbutton.h
 FORMS += mainwindow.ui
-RESOURCES += images.qrc
+RESOURCES += \
+    images.qrc
