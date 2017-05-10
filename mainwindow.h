@@ -7,10 +7,10 @@
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#define NUMBER_OF_MINES 10
 #define BLANK_CELL 0
 #define FLAGGED_CELL 1
 #define QUESTION_CELL 2
+#define REVEALED_CELL 3
 #define MINE 9
 
 #include <iostream>
@@ -44,6 +44,7 @@ private:
 
     QString buttonStyleFlatBlue;
     QString buttonStyleFlatGrey;
+    QString buttonStyleFlatDarkGrey;
     QString buttonFontSmall;
     QString buttonFontBig;
 
@@ -57,23 +58,26 @@ private:
     int fieldHeight;
     int fieldWidth;
     int amountOfMines;
+
     QVector< QVector<int> > fieldStatus;
     QVector< QVector<int> > mineBoard;
     QVector< QVector<float> > probabilities;
+    QVector< QVector<int> > amountOfNeighbour;
 
-    void initMainWindow(bool reinitialize);
+    void initMainWindow();
     void lost();
     void won();
     void clear(int, int, bool);
     void createGameVectors(int fieldWidth, int fieldHeight);
     void changeIcon(MineSweeperButton*, int, int);
+    void buttonResize();
+    void calculateProbabilitiesForAll();
+    void calculateProbabilitySinglePoint();
+    void setButtonTooltip(int xCoordinate, int yCoordinate, float probability);
 
 private slots:
     void hasRightClicked(QString);
     void reset();
-    void handleButtonPressed();
-    void handleButtonReleased();
-    void setButtonTooltip(int xCoordinate, int yCoordinate);
 
 public slots:
 

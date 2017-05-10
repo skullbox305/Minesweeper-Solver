@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>987</width>
-    <height>830</height>
+    <width>900</width>
+    <height>805</height>
    </rect>
   </property>
   <property name="palette">
@@ -121,13 +121,16 @@
 }
 	background-color: rgb(207, 207, 208);</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0,10,0,0">
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item row="0" column="0">
-     <layout class="QGridLayout" name="GameMenu" columnstretch="0,0,0,0,0,0,0,10">
+     <layout class="QGridLayout" name="GameMenu" columnstretch="1,0,0,0,0,0,10">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
-      <item row="0" column="1">
+      <item row="0" column="0">
        <layout class="QFormLayout" name="GameSize">
         <property name="sizeConstraint">
          <enum>QLayout::SetFixedSize</enum>
@@ -138,69 +141,92 @@
         <property name="formAlignment">
          <set>Qt::AlignHCenter|Qt::AlignTop</set>
         </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
+        <item row="1" column="0">
+         <widget class="QLabel" name="fieldWidthLabel">
           <property name="text">
            <string>Breite:</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="breite">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>10</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
+        <item row="2" column="0">
+         <widget class="QLabel" name="fieldHeightLabel">
           <property name="text">
            <string>Höhe:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="hoehe">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>10</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_3">
+        <item row="3" column="0">
+         <widget class="QLabel" name="mineAmountLabel">
           <property name="text">
            <string>Minen:</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="anzahlMinen">
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="fieldWidth">
+          <property name="toolTip">
+           <string>Maximal 30 </string>
           </property>
-          <property name="text">
-           <string>50</string>
+          <property name="minimum">
+           <number>2</number>
+          </property>
+          <property name="maximum">
+           <number>30</number>
+          </property>
+          <property name="value">
+           <number>10</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSpinBox" name="fieldHeigth">
+          <property name="toolTip">
+           <string>Maximal 24</string>
+          </property>
+          <property name="minimum">
+           <number>2</number>
+          </property>
+          <property name="maximum">
+           <number>24</number>
+          </property>
+          <property name="value">
+           <number>10</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="mineAmount">
+          <property name="toolTip">
+           <string>Maximal 667</string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>667</number>
+          </property>
+          <property name="value">
+           <number>10</number>
           </property>
          </widget>
         </item>
        </layout>
       </item>
-      <item row="0" column="2">
+      <item row="0" column="6">
+       <layout class="QGridLayout" name="Spacer2">
+        <item row="1" column="0">
+         <widget class="QLabel" name="gameStatus">
+          <property name="text">
+           <string>Gewonnen/Verloren</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1">
        <layout class="QVBoxLayout" name="GameOptions">
         <property name="sizeConstraint">
          <enum>QLayout::SetFixedSize</enum>
@@ -249,21 +275,7 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="7">
-       <layout class="QGridLayout" name="Spacer2">
-        <item row="1" column="0">
-         <widget class="QLabel" name="gameStatus">
-          <property name="text">
-           <string>Gewonnen/Verloren</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="6">
+      <item row="0" column="5">
        <widget class="QLCDNumber" name="lcdFlagCount">
         <property name="enabled">
          <bool>true</bool>
@@ -295,7 +307,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
+      <item row="0" column="4">
        <widget class="QLabel" name="label_4">
         <property name="font">
          <font>
@@ -308,13 +320,25 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <layout class="QGridLayout" name="Spacer1"/>
-      </item>
      </layout>
     </item>
-    <item row="3" column="0">
+    <item row="1" column="0" rowspan="3">
      <widget class="QScrollArea" name="scrollArea">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(51, 56, 62);</string>
       </property>
@@ -335,9 +359,21 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>967</width>
-         <height>696</height>
+         <width>880</width>
+         <height>680</height>
         </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
        </property>
        <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0,0">
         <property name="sizeConstraint">
@@ -345,7 +381,13 @@
         </property>
         <item row="2" column="0">
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="1">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetFixedSize</enum>
+          </property>
+          <property name="verticalSpacing">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
            <layout class="QGridLayout" name="mineContainer" rowstretch="0" columnstretch="0">
             <property name="sizeConstraint">
              <enum>QLayout::SetFixedSize</enum>

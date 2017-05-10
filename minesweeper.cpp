@@ -117,7 +117,3 @@ int Minesweeper::getValue(int xCoordinate, int yCoordinate)
     return mineBoard[xCoordinate][yCoordinate];
 }
 
-float Minesweeper::getProbability(int, int)
-{
-    return 10.10;
-}

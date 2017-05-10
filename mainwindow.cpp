@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     buttonStyleFlatBlue = "background-color: rgb(111, 193, 255); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;";
     buttonStyleFlatGrey = "background-color: rgb(212, 212, 212); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;";
+    buttonStyleFlatDarkGrey = "background-color: rgb(150, 150, 150); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;";
     buttonFontSmall = "font: 10pt 'Arial';";
     buttonFontBig = "font: 12pt 'Arial';";
 
@@ -41,10 +42,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapperLeftClick, SIGNAL(mapped(QString)), this, SLOT(revealCell(QString)));
     connect(signalMapperRightClick, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString)));
 
-    initMainWindow(false);
+    initMainWindow();
 }
 
-void MainWindow::initMainWindow(bool reinitialize)
+void MainWindow::initMainWindow()
 {
     //Global variables
     hasFinished = false; //Has the game finished?
@@ -55,6 +56,7 @@ void MainWindow::initMainWindow(bool reinitialize)
 
     //The display of the number of flags that have been put up (Mines left to solve)
     ui->lcdFlagCount->display ( amountOfMines - flagsFlagged );
+
     //Verloren oder Game Over Text löschen
     ui->gameStatus->setText(QString(""));
 
@@ -72,35 +74,34 @@ void MainWindow::initMainWindow(bool reinitialize)
         {
             fieldStatus[i][j] = BLANK_CELL;
             probabilities[i][j] = i+j;
+            amountOfNeighbour[i][j] = 0;
 
             MineSweeperButton* button = new MineSweeperButton("");
 
-            //Button Styling
             //button->setAttribute(Qt::WA_LayoutUsesWidgetRect); //Forces Mac OS X styled minesweeper to look like linux/windows
-            button->setMaximumHeight(50);
-            button->setMaximumWidth(50);
-            button->setIconSize (QSize(50,50));
+            button->setFixedSize(50,50);
             button->setStyleSheet(buttonStyleFlatBlue);
-
-
 
 
             //Actually add the button to the container
             ui->mineContainer->addWidget(button, i, j);
+
 
             QString coordinates = QString::number(i)+","+QString::number(j); //Coordinate of the button
             //Map the coordinates to a particular MineSweeperButton
             signalMapperRightClick->setMapping(button, coordinates);
             signalMapperLeftClick->setMapping(button, coordinates);
 
+
             //Connections for the buttons
             connect(button, SIGNAL(clicked()), signalMapperLeftClick, SLOT(map()));
             connect(button, SIGNAL(rightButtonClicked()), signalMapperRightClick, SLOT(map()));
-            connect(button, SIGNAL(pressed()), this, SLOT(handleButtonPressed()));
-            connect(button, SIGNAL(released()), this, SLOT(handleButtonReleased()));
         }
     }
-    setButtonTooltip(1,1);
+    if(!ui->firstClickSafe->isChecked())
+    {
+        calculateProbabilitiesForAll();
+    }
 }
 
 
@@ -122,6 +123,7 @@ void MainWindow::createGameVectors(int fieldWidth, int fieldHeight)
     }
     fieldStatus = result;
     mineBoard = result;
+    amountOfNeighbour = result;
     probabilities = result1;
 }
 
@@ -135,67 +137,70 @@ void MainWindow::createGameVectors(int fieldWidth, int fieldHeight)
 void MainWindow::hasRightClicked(QString coordinates)
 {
     //If we've finished the game, we don't do anything
-    if (hasFinished) return;
-
-    //Retrieve the button that was pushed from the signal mapper
-    MineSweeperButton *buttonPushed = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
-
-    // Obtain its coordinates
-    QStringList results = coordinates.split(",");
-
-    int row = results.at(0).toInt();
-    int column = results.at(1).toInt();
-
-
-    //If we're not flat, it means that this button has not been pushed yet
-    if (! buttonPushed->isFlat() )
+    if (!hasFinished)
     {
-        //0 = flat, 1 = flat with flag, 2 = ?
-        if ( fieldStatus[row][column] == BLANK_CELL)
+        //Retrieve the button that was pushed from the signal mapper
+        MineSweeperButton *buttonPushed = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
+
+        // Obtain its coordinates
+        QStringList results = coordinates.split(",");
+
+        int row = results.at(0).toInt();
+        int column = results.at(1).toInt();
+
+
+        //If we're not flat, it means that this button has not been pushed yet
+        if(!(fieldStatus[row][column] == REVEALED_CELL))
         {
-            //We are now flagging the cell as it was blank
-            flagsFlagged++;
-
-            buttonPushed->setText(QString("⚑"));
-            buttonPushed->setStyleSheet("background-color: rgb(231, 197, 77); color: rgb(199, 0, 0); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
-            fieldStatus[row][column] = FLAGGED_CELL;
-
-            ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged );
-
-            //Did we get a mine?
-            if ( game->getValue(row, column) == MINE ) {
-                minesFlagged++;
-            }
-
-        } else if ( fieldStatus[row][column] == FLAGGED_CELL )
-        {
-            //We are now making the thing a question mark
-            flagsFlagged--;
-            ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged ); //No longer flagged so we are going back up
-
-            buttonPushed->setText(QString("?"));
-            buttonPushed->setStyleSheet("background-color: rgb(169, 225, 70); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
-
-            fieldStatus[row][column] = QUESTION_CELL;
-        } else if ( fieldStatus[row][column] == QUESTION_CELL )
-        {
-            ui->lcdFlagCount->display( NUMBER_OF_MINES - flagsFlagged );
-            if(ui->showMines->isChecked())
+            //0 = flat, 1 = flat with flag, 2 = ?
+            if ( fieldStatus[row][column] == BLANK_CELL)
             {
-                buttonPushed->setText(QString("💣"));
-                buttonPushed->setStyleSheet(buttonStyleFlatBlue + buttonFontSmall);
-            }
-            else
-            {
-                buttonPushed->setText(QString(""));
-                buttonPushed->setStyleSheet(buttonStyleFlatBlue);
-            }
+                //We are now flagging the cell as it was blank
+                flagsFlagged++;
 
-            fieldStatus[row][column] = BLANK_CELL;
+                buttonPushed->setText(QString("⚑"));
+                buttonPushed->setStyleSheet("background-color: rgb(231, 197, 77); color: rgb(199, 0, 0); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
+                fieldStatus[row][column] = FLAGGED_CELL;
+
+                ui->lcdFlagCount->display( amountOfMines - flagsFlagged );
+
+                //Did we get a mine?
+                if ( game->getValue(row, column) == MINE ) {
+                    minesFlagged++;
+                }
+
+            } else if ( fieldStatus[row][column] == FLAGGED_CELL )
+            {
+                //We are now making the thing a question mark
+                flagsFlagged--;
+                ui->lcdFlagCount->display( amountOfMines - flagsFlagged ); //No longer flagged so we are going back up
+
+                buttonPushed->setText(QString("?"));
+                buttonPushed->setStyleSheet("background-color: rgb(169, 225, 70); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
+
+                fieldStatus[row][column] = QUESTION_CELL;
+            } else if ( fieldStatus[row][column] == QUESTION_CELL )
+            {
+                ui->lcdFlagCount->display( amountOfMines - flagsFlagged );
+                if(ui->showMines->isChecked() && game->getValue(row, column) == MINE)
+                {
+                    buttonPushed->setText(QString("💣"));
+                    buttonPushed->setStyleSheet(buttonStyleFlatBlue + buttonFontSmall);
+                }
+                else
+                {
+                    buttonPushed->setText(QString(""));
+                    buttonPushed->setStyleSheet(buttonStyleFlatBlue);
+                }
+
+                fieldStatus[row][column] = BLANK_CELL;
+            }
         }
-    } else {
-        //The cell has been pushed now
-        buttonPushed->setFlat(true);
+//        else {
+//            //The cell has been pushed now
+//            //buttonPushed->setFlat(true);
+//            fieldStatus[row][column] = REVEALED_CELL;
+//        }
     }
 }
 
@@ -206,78 +211,74 @@ void MainWindow::hasRightClicked(QString coordinates)
   */
 void MainWindow::revealCell(QString coordinates)
 {
-    //Obtain the coordinates
-    QStringList results = coordinates.split(",");
-
-    if ( results.size() != 2) //Ensure that we receive two coordinates
-        qFatal("Less than two numbers received");
-
-    int xCoordinate = results.at(0).toInt();
-    int yCoordinate = results.at(1).toInt();
-
-    if(!hasStarted)
+    if(!hasFinished)
     {
-        hasStarted = true;
-        game->generateBoard(ui->firstClickSafe->isChecked(), xCoordinate, yCoordinate);
-        showMinesIfChecked();
+        //Obtain the coordinates
+        QStringList results = coordinates.split(",");
 
-    }
+        if ( results.size() != 2) //Ensure that we receive two coordinates
+            qFatal("Less than two numbers received");
 
+        int xCoordinate = results.at(0).toInt();
+        int yCoordinate = results.at(1).toInt();
 
-    //If we already finished the game.. we won't do anything here
-    if (hasFinished) //schlecht, ändern
-    {
-        return;
-    }
-    else
-    {
+        if(!hasStarted)
+        {
+            hasStarted = true;
+            game->generateBoard(ui->firstClickSafe->isChecked(), xCoordinate, yCoordinate);
+            showMinesIfChecked();
+
+        }
+
         cellsRevealed++;
-    }
 
-    //If it is flagged, we will ignore the mine
-    if ( fieldStatus[xCoordinate][yCoordinate] == FLAGGED_CELL || fieldStatus[xCoordinate][yCoordinate] == QUESTION_CELL )
-    {
-        cellsRevealed--;
-        return;
-    }
+        //If it is flagged, we will ignore the mine
+        if ( fieldStatus[xCoordinate][yCoordinate] == FLAGGED_CELL || fieldStatus[xCoordinate][yCoordinate] == QUESTION_CELL )
+        {
+            cellsRevealed--;
+            return;
+        }
 
-    //Get the button we just pushed
-    MineSweeperButton *buttonPushed = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
+        //Get the button we just pushed
+        MineSweeperButton *buttonPushed = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
 
 
-    //If it is flat.. we already pushed it so ignore it
-    if (buttonPushed->isFlat())
-    {
-        cellsRevealed--;
-        return;
-    }
+        //If it is flat.. we already pushed it so ignore it
+        if(fieldStatus[xCoordinate][yCoordinate] == REVEALED_CELL)
+        {
+            cellsRevealed--;
+            return;
+        }
 
-    //If we have 90 cells revealed (10 mines, 90 not mines), we win the game!
-    if (cellsRevealed == ((fieldWidth*fieldHeight) - amountOfMines) && game->getValue(xCoordinate, yCoordinate) != MINE)
-    {
+        //If we have 90 cells revealed (10 mines, 90 not mines), we win the game!
+        if (cellsRevealed == ((fieldWidth*fieldHeight) - amountOfMines) && game->getValue(xCoordinate, yCoordinate) != MINE)
+        {
+            changeIcon(buttonPushed, xCoordinate, yCoordinate);
+            won();
+            return;
+        }
+
+        //Recrusively clear the squares if we reveal a zero
+        if ( game->getValue (xCoordinate, yCoordinate) == 0 ) {
+            cellsRevealed--;
+            clear(xCoordinate, yCoordinate, true);
+        }
+
+        //Set the image according to the value of the cell
         changeIcon(buttonPushed, xCoordinate, yCoordinate);
-        won();
-        return;
+
+        //buttonPushed->setFlat(true);    // if revealed, set button flat !"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        fieldStatus[xCoordinate][yCoordinate] = REVEALED_CELL;
+
+        //If we reveal a mine, we just lost :(
+        if ( game->isMine( xCoordinate, yCoordinate ) )
+        {
+            lost();
+            cellsRevealed--;
+            return;
+        }
     }
-
-    //Recrusively clear the squares if we reveal a zero
-    if ( game->getValue (xCoordinate, yCoordinate) == 0 ) {
-        cellsRevealed--;
-        clear(xCoordinate, yCoordinate, true);
-    }
-
-    //Set the image according to the value of the cell
-    changeIcon(buttonPushed, xCoordinate, yCoordinate);
-
-    buttonPushed->setFlat(true);    // if revealed, set button flat !"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    //If we reveal a mine, we just lost :(
-    if ( game->isMine( xCoordinate, yCoordinate ) )
-    {
-        lost();
-        cellsRevealed--;
-        return;
-    }
+    calculateProbabilitiesForAll();
 }
 
 /**
@@ -336,7 +337,7 @@ void MainWindow::changeIcon(MineSweeperButton *buttonPushed, int row, int column
 
 void MainWindow::showMinesIfChecked()
 {
-    if(hasStarted)
+    if(hasStarted && !hasFinished)
     {
         for ( int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++ )
         {
@@ -376,9 +377,10 @@ void MainWindow::clear(int row, int column, bool allowedClear)
     MineSweeperButton *buttonPushed = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
 
     //Ensure that the button is not flat, that the value is not a mine, that it is allowed to clear (not something that isn't a zero) and it isn't flagged
-    if ( buttonPushed->isFlat () == false && game->getValue (row, column) != MINE && allowedClear == true && fieldStatus[row][column] != FLAGGED_CELL)
+    if (fieldStatus[row][column] != REVEALED_CELL && game->getValue (row, column) != MINE && allowedClear == true && fieldStatus[row][column] != FLAGGED_CELL)
     {
-        buttonPushed->setFlat (true); //We're now flat
+        //buttonPushed->setFlat (true); //We're now flat
+        fieldStatus[row][column] = REVEALED_CELL;
 
         //Set the image according to the value of the cell
         changeIcon(buttonPushed, row, column);
@@ -437,6 +439,7 @@ void MainWindow::lost() {
     hasFinished = true;
     ui->gameStatus->setText(QString("FAIL"));
     ui->gameStatus->setStyleSheet("color: rgb(255,0,0); font: 75 20pt 'Arial'");
+    hasFinished = true;
 
     //Go through all the cells and reveal all the mines
     for ( int i = 0; i < fieldHeight; i++ )
@@ -448,9 +451,10 @@ void MainWindow::lost() {
             MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
 
             //Check if it's a mine, if it is.. show it!
-            if (! button->isFlat () && game->getValue (i,j) == MINE )
+            if (fieldStatus[i][j] != REVEALED_CELL && game->getValue (i,j) == MINE )
             {
-                button->setFlat (true);
+                //button->setFlat (true);
+                fieldStatus[i][j] = REVEALED_CELL;
 
                 //Are we flagged? Good job! you find a mine and flagged it :)
                 if ( fieldStatus[i][j] == FLAGGED_CELL ) {
@@ -465,9 +469,6 @@ void MainWindow::lost() {
 
         }
     }
-
-    //We're done with this!
-    hasFinished = true;
 }
 
 /**
@@ -481,59 +482,36 @@ void MainWindow::reset() {
     flagsFlagged = 0;
     minesFlagged = 0;
 
-
-    //Go through all the cells and reset the icons
-    for( int i = 0; i < fieldHeight; i++)
+    if( (( ui->fieldHeigth->text().toInt() * ui->fieldWidth->text().toInt() * 0.927) < ui->mineAmount->text().toInt() ))
     {
-        for( int j = 0; j < fieldWidth; j++ )
-        {
-            QString coordinates = QString::number(i)+","+QString::number(j);
-            MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
 
-            delete button;
-        }
-    }
-
-
-    fieldHeight = ui->hoehe->text().toInt();
-    fieldWidth = ui->breite->text().toInt();
-    amountOfMines = ui->anzahlMinen->text().toInt();
-
-    if(fieldWidth > 30)
-    {
-        QMessageBox messageBox;
-        messageBox.information(0, "Eingabefehler", "Wert für die Feldbreite ist zu hoch. Maximal: 30");
-        messageBox.setFixedSize(600,300);
-        ui->breite->setText("30");
-        fieldWidth = 30;
-        ui->newGame->setDown(false);
-    }
-
-    if(fieldHeight > 24)
-    {
-        QMessageBox messageBox;
-        messageBox.information(0, "Eingabefehler", "Wert für die Feldhöhe ist zu hoch. Maximal: 24");
-        messageBox.setFixedSize(600,300);
-        ui->hoehe->setText("24");
-        fieldHeight = 24;
-        ui->newGame->setDown(false);
-    }
-
-    if( ((fieldHeight * fieldWidth) * 0.927) < amountOfMines )
-    {
         QMessageBox messageBox;
         int mineAmount =  (fieldHeight * fieldWidth) * 0.927;
         messageBox.information(0, "Eingabefehler", "Minenanzahl zu hoch. Maximal 92% des Feldes dürfen Minen sein. Neuer Wert: " + QString::number(mineAmount));
         messageBox.setFixedSize(600,300);
-        ui->anzahlMinen->setText(QString::number(mineAmount));
+        ui->mineAmount->setValue(mineAmount);
         amountOfMines = mineAmount;
         ui->newGame->setDown(false);
-
+        ui->centralWidget->repaint();
     }
+    else
+    {
+        //Go through all the cells and reset the icons
+        for( int i = 0; i < fieldHeight; i++)
+        {
+            for( int j = 0; j < fieldWidth; j++ )
+            {
+                QString coordinates = QString::number(i)+","+QString::number(j);
+                MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
 
-
-    initMainWindow(false);
-
+                delete button;
+            }
+        }
+        fieldHeight = ui->fieldHeigth->text().toInt();
+        fieldWidth = ui->fieldWidth->text().toInt();
+        amountOfMines = ui->mineAmount->text().toInt();
+        initMainWindow();
+    }
 }
 
 /**
@@ -544,6 +522,7 @@ void MainWindow::won()
 {
     ui->gameStatus->setText(QString("Gewonnen"));
     ui->gameStatus->setStyleSheet("color: rgb(0,150,0); font: 75 20pt 'Arial'");
+    hasFinished = true;
 
     //Set all the mines to disarmed
     for ( int i = 0; i < fieldHeight; i++ )
@@ -553,50 +532,130 @@ void MainWindow::won()
             QString coordinates = QString::number(i)+","+QString::number(j);
             MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
 
-            if (! button->isFlat () && game->getValue(i, j) == MINE )
+            if (fieldStatus[i][j] != REVEALED_CELL && game->getValue(i, j) == MINE )
             {
-                button->setFlat (true);
+                //button->setFlat (true);
+                fieldStatus[i][j] = REVEALED_CELL;
                 button->setText(QString("💣"));
-                button->setStyleSheet("color: rgb(0,150,0);" + buttonStyleFlatGrey + buttonFontSmall);
+                button->setStyleSheet(buttonStyleFlatDarkGrey + buttonFontSmall);
             }
 
         }
     }
 }
 
-
-/**
-  * handleButtonPressed()
-  * Handles when a button is pressed
-  */
-void MainWindow::handleButtonPressed()
-{
-    //If we have finished.. nothing happens
-    if (hasFinished)
-    {
-        return;
-    }
-}
-
-
-/**
-  * handleButtonReleased()
-  * Handles when a cell is released
-  */
-void MainWindow::handleButtonReleased()
-{
-    if (hasFinished) {
-        return;
-    }
-}
-
-void MainWindow::setButtonTooltip(int xCoordinate, int yCoordinate)
+void MainWindow::setButtonTooltip(int xCoordinate, int yCoordinate, float probability)
 {
     QString coordinates = QString::number(xCoordinate)+","+QString::number(yCoordinate);
     MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
 
-    button->setToolTip("Wahrscheinlichkeit für Mine: " + QString::number(game->getProbability(0,0)) + "%");
+    if(!(fieldStatus[xCoordinate][yCoordinate] == REVEALED_CELL))
+    {
+        button->setToolTip("Wahrscheinlichkeit für Mine: " + QString::number(probability, 'f', 2) + "%");
 
+    } else
+    {
+        button->setToolTip("");
+    }
+}
+
+void MainWindow::calculateProbabilitiesForAll()
+{
+    for(int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++)
+    {
+        for ( int yCoordinate = 0; yCoordinate < fieldWidth; yCoordinate++)
+        {
+            probabilities[xCoordinate][yCoordinate] = 100.0 * (amountOfMines / (float)( (fieldHeight * fieldWidth) - cellsRevealed));
+            setButtonTooltip(xCoordinate,yCoordinate, probabilities[xCoordinate][yCoordinate]);
+        }
+    }
+    calculateProbabilitySinglePoint();
+}
+
+void MainWindow::calculateProbabilitySinglePoint()
+{
+    for(int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++)
+    {
+        for ( int yCoordinate = 0; yCoordinate < fieldWidth; yCoordinate++)
+        {
+            if( (game->getValue(xCoordinate, yCoordinate) > 0) && (game->getValue(xCoordinate, yCoordinate) < 9) && (fieldStatus[xCoordinate][yCoordinate] == REVEALED_CELL))
+            {
+                //Top left
+                if ( ((xCoordinate - 1) != -1 && (yCoordinate - 1) != -1) )
+                {
+                    if(fieldStatus[xCoordinate - 1][yCoordinate - 1] != REVEALED_CELL)
+                    {
+                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+                    }
+                }
+
+                //Top center
+                if ( (xCoordinate - 1) != -1)
+                {
+                    if(fieldStatus[xCoordinate - 1][yCoordinate] != REVEALED_CELL)
+                    {
+                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+                    }
+                }
+
+                //Top right
+                if ( (xCoordinate - 1) != -1 && (yCoordinate + 1) != fieldWidth)
+                {
+                    if(fieldStatus[xCoordinate - 1][yCoordinate + 1] != REVEALED_CELL)
+                    {
+                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+                    }
+                }
+
+                //Left
+                if ( (yCoordinate - 1) != -1)
+                {
+                    if(fieldStatus[xCoordinate][yCoordinate - 1] != REVEALED_CELL)
+                    {
+                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+                    }
+                }
+
+                //Right
+                if ( (yCoordinate + 1) != fieldWidth)
+                {
+                    if(fieldStatus[xCoordinate][yCoordinate + 1] != REVEALED_CELL)
+                    {
+                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+                    }
+                }
+
+                //Bottom left
+                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate - 1) != -1)
+                {
+                    if(fieldStatus[xCoordinate + 1][yCoordinate - 1] != REVEALED_CELL)
+                    {
+                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+                    }
+                }
+
+                //Bottom center
+                if ( (xCoordinate + 1) != fieldHeight)
+                {
+                    if(fieldStatus[xCoordinate + 1][yCoordinate] != REVEALED_CELL)
+                    {
+                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+                    }
+                }
+
+                //Bottom right
+                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate + 1) != fieldWidth)
+                {
+                    if(fieldStatus[xCoordinate + 1][yCoordinate + 1] != REVEALED_CELL)
+                    {
+                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+                    }
+                }
+            }
+//            probabilities[xCoordinate][yCoordinate] = 100.0 * (amountOfMines / (float)( (fieldHeight * fieldWidth) - cellsRevealed));
+//            setButtonTooltip(xCoordinate,yCoordinate, probabilities[xCoordinate][yCoordinate]);
+        }
+    }
 }
 
 /**

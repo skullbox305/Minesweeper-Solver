@@ -12,11 +12,8 @@ public:
     void generateBoard(bool firstClickSafe, int xFirstClick, int yFirstClick);
     bool isMine(int, int);
     int getValue(int, int);
-    float getProbability(int, int);
+
 private:
-
-    void calculateProbabilities();
-
     int fieldHeight;
     int fieldWidth;
     int amountOfMines;
