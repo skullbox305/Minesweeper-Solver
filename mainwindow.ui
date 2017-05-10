@@ -168,7 +168,7 @@
            <string>Maximal 30 </string>
           </property>
           <property name="minimum">
-           <number>2</number>
+           <number>9</number>
           </property>
           <property name="maximum">
            <number>30</number>
@@ -184,7 +184,7 @@
            <string>Maximal 24</string>
           </property>
           <property name="minimum">
-           <number>2</number>
+           <number>9</number>
           </property>
           <property name="maximum">
            <number>24</number>

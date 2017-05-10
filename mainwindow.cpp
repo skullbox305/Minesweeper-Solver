@@ -78,8 +78,42 @@ void MainWindow::initMainWindow()
 
             MineSweeperButton* button = new MineSweeperButton("");
 
-            //button->setAttribute(Qt::WA_LayoutUsesWidgetRect); //Forces Mac OS X styled minesweeper to look like linux/windows
-            button->setFixedSize(50,50);
+            //button->setAttribute(Qt::WA_LayoutUsesWidgetRect); //Forces Mac OS X styled minesweeper to look like linux/windows#
+
+
+
+            if(fieldHeight <= 9 && fieldWidth <= 11)
+            {
+                button->setFixedSize(70,70);
+            } else if(fieldHeight <= 10 && fieldWidth <= 12)
+            {
+                button->setFixedSize(65,65);
+            } else if(fieldHeight <= 11 && fieldWidth <= 13)
+            {
+                button->setFixedSize(60,60);
+            } else if(fieldHeight <= 12 && fieldWidth <= 14)
+            {
+                button->setFixedSize(55,55);
+            } else if(fieldHeight <= 13 && fieldWidth <= 15)
+            {
+                button->setFixedSize(50,50);
+            } else if(fieldHeight <= 14 && fieldWidth <= 18)
+            {
+                button->setFixedSize(45,45);
+            } else if(fieldHeight <= 15 && fieldWidth <= 20)
+            {
+                button->setFixedSize(40,40);
+            } else if(fieldHeight <= 18 && fieldWidth <= 22)
+            {
+                button->setFixedSize(35,35);
+            } else if(fieldHeight <= 21 && fieldWidth <= 26)
+            {
+                button->setFixedSize(30,30);
+            } else if(fieldHeight <= 24 && fieldWidth <= 30)
+            {
+                button->setFixedSize(25,25);
+            }
+
             button->setStyleSheet(buttonStyleFlatBlue);
 
 
@@ -196,11 +230,6 @@ void MainWindow::hasRightClicked(QString coordinates)
                 fieldStatus[row][column] = BLANK_CELL;
             }
         }
-//        else {
-//            //The cell has been pushed now
-//            //buttonPushed->setFlat(true);
-//            fieldStatus[row][column] = REVEALED_CELL;
-//        }
     }
 }
 
@@ -490,7 +519,7 @@ void MainWindow::reset() {
         messageBox.information(0, "Eingabefehler", "Minenanzahl zu hoch. Maximal 92% des Feldes dürfen Minen sein. Neuer Wert: " + QString::number(mineAmount));
         messageBox.setFixedSize(600,300);
         ui->mineAmount->setValue(mineAmount);
-        amountOfMines = mineAmount;
+
         ui->newGame->setDown(false);
         ui->centralWidget->repaint();
     }
@@ -510,6 +539,7 @@ void MainWindow::reset() {
         fieldHeight = ui->fieldHeigth->text().toInt();
         fieldWidth = ui->fieldWidth->text().toInt();
         amountOfMines = ui->mineAmount->text().toInt();
+
         initMainWindow();
     }
 }
