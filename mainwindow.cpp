@@ -23,7 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
     buttonFontBig = "font: 14pt 'Arial';";
 
     ui->setupUi(this);
-    QMainWindow::resize(900,850);
 
     //Layout designs
     ui->mineContainer->setSpacing(2); //Forces the board cells to be spaced next to each other
@@ -42,10 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapperLeftClick, SIGNAL(mapped(QString)), this, SLOT(revealCell(QString)));
     connect(signalMapperRightClick, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString)));
 
-    initMainWindow();
+    initMainWindow(false);
 }
 
-void MainWindow::initMainWindow()
+void MainWindow::initMainWindow(bool reinitialize)
 {
     //Global variables
     hasFinished = false; //Has the game finished?
@@ -66,6 +65,8 @@ void MainWindow::initMainWindow()
     //Now handle the actual game.. enough of this extra feature stuff. Now for the real deal!
     game = new Minesweeper(fieldWidth, fieldHeight, amountOfMines, mineBoard);
 
+
+
     //Initialize statuses
     // 0 = Empty, 1 = flagged, 2 = ?
     for ( int i = 0; i < fieldHeight; i++)
@@ -76,64 +77,90 @@ void MainWindow::initMainWindow()
             probabilities[i][j] = i+j;
             amountOfNeighbour[i][j] = 0;
 
-            MineSweeperButton* button = new MineSweeperButton("");
 
-            //button->setAttribute(Qt::WA_LayoutUsesWidgetRect); //Forces Mac OS X styled minesweeper to look like linux/windows#
+            if(reinitialize)
+            {
+                QString coordinates = QString::number(i)+","+QString::number(j);
+                MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
+
+                button->setStyleSheet(buttonStyleFlatBlue);
+                button->setText("");
+            } else
+            {
+                MineSweeperButton *button = new MineSweeperButton();
+
+                if(fieldHeight <= 9 && fieldWidth <= 11)
+                {
+                    button->setFixedSize(70,70);
+                } else if(fieldHeight <= 10 && fieldWidth <= 12)
+                {
+                    button->setFixedSize(65,65);
+                } else if(fieldHeight <= 11 && fieldWidth <= 13)
+                {
+                    button->setFixedSize(60,60);
+                } else if(fieldHeight <= 12 && fieldWidth <= 14)
+                {
+                    button->setFixedSize(55,55);
+                } else if(fieldHeight <= 13 && fieldWidth <= 15)
+                {
+                    button->setFixedSize(50,50);
+                } else if(fieldHeight <= 14 && fieldWidth <= 18)
+                {
+                    button->setFixedSize(45,45);
+                } else if(fieldHeight <= 15 && fieldWidth <= 20)
+                {
+                    button->setFixedSize(40,40);
+                } else if(fieldHeight <= 18 && fieldWidth <= 22)
+                {
+                    button->setFixedSize(35,35);
+                } else if(fieldHeight <= 21 && fieldWidth <= 26)
+                {
+                    button->setFixedSize(30,30);
+                } else if(fieldHeight <= 24 && fieldWidth <= 30)
+                {
+                    button->setFixedSize(25,25);
+                }
+
+                button->setStyleSheet(buttonStyleFlatBlue);
+
+
+                //Actually add the button to the container
+                ui->mineContainer->addWidget(button, i, j);
 
 
 
-            if(fieldHeight <= 9 && fieldWidth <= 11)
-            {
-                button->setFixedSize(70,70);
-            } else if(fieldHeight <= 10 && fieldWidth <= 12)
-            {
-                button->setFixedSize(65,65);
-            } else if(fieldHeight <= 11 && fieldWidth <= 13)
-            {
-                button->setFixedSize(60,60);
-            } else if(fieldHeight <= 12 && fieldWidth <= 14)
-            {
-                button->setFixedSize(55,55);
-            } else if(fieldHeight <= 13 && fieldWidth <= 15)
-            {
-                button->setFixedSize(50,50);
-            } else if(fieldHeight <= 14 && fieldWidth <= 18)
-            {
-                button->setFixedSize(45,45);
-            } else if(fieldHeight <= 15 && fieldWidth <= 20)
-            {
-                button->setFixedSize(40,40);
-            } else if(fieldHeight <= 18 && fieldWidth <= 22)
-            {
-                button->setFixedSize(35,35);
-            } else if(fieldHeight <= 21 && fieldWidth <= 26)
-            {
-                button->setFixedSize(30,30);
-            } else if(fieldHeight <= 24 && fieldWidth <= 30)
-            {
-                button->setFixedSize(25,25);
+                QString coordinates = QString::number(i)+","+QString::number(j); //Coordinate of the button
+                //Map the coordinates to a particular MineSweeperButton
+                signalMapperRightClick->setMapping(button, coordinates);
+                signalMapperLeftClick->setMapping(button, coordinates);
+
+
+                //Connections for the buttons
+                connect(button, SIGNAL(clicked()), signalMapperLeftClick, SLOT(map()));
+                connect(button, SIGNAL(rightButtonClicked()), signalMapperRightClick, SLOT(map()));
             }
+        }
 
-            button->setStyleSheet(buttonStyleFlatBlue);
-
-
-            //Actually add the button to the container
-            ui->mineContainer->addWidget(button, i, j);
-
-
-            QString coordinates = QString::number(i)+","+QString::number(j); //Coordinate of the button
-            //Map the coordinates to a particular MineSweeperButton
-            signalMapperRightClick->setMapping(button, coordinates);
-            signalMapperLeftClick->setMapping(button, coordinates);
-
-
-            //Connections for the buttons
-            connect(button, SIGNAL(clicked()), signalMapperLeftClick, SLOT(map()));
-            connect(button, SIGNAL(rightButtonClicked()), signalMapperRightClick, SLOT(map()));
+        if(!reinitialize)
+        {
+            if( (i % 2) == 0 )
+            {
+                ui->scrollArea->show();
+                qApp->processEvents();
+            } else if((i % 2) == 1 && i < fieldHeight - 1)
+            {
+                ui->scrollArea->hide();
+            }
+        } else
+        {
+            ui->scrollArea->hide();
         }
     }
-    if(!ui->firstClickSafe->isChecked())
-    {
+
+    ui->scrollArea->show();
+
+
+    if(!ui->firstClickSafe->isChecked())    {
         calculateProbabilitiesForAll();
     }
 }
@@ -307,6 +334,7 @@ void MainWindow::revealCell(QString coordinates)
             return;
         }
     }
+
     calculateProbabilitiesForAll();
 }
 
@@ -319,7 +347,7 @@ void MainWindow::revealCell(QString coordinates)
   */
 void MainWindow::changeIcon(MineSweeperButton *buttonPushed, int row, int column)
 {
-
+    buttonPushed->clearFocus();
 
     //Set the image according to the value of the cell
     if ( game->getValue (row, column) == 0)
@@ -368,6 +396,8 @@ void MainWindow::showMinesIfChecked()
 {
     if(hasStarted && !hasFinished)
     {
+
+        ui->scrollArea->hide();
         for ( int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++ )
         {
             for ( int yCoordinate = 0; yCoordinate < fieldWidth; yCoordinate++ )
@@ -387,6 +417,7 @@ void MainWindow::showMinesIfChecked()
                 }
             }
         }
+        ui->scrollArea->show();
     }
 
 }
@@ -404,6 +435,7 @@ void MainWindow::clear(int row, int column, bool allowedClear)
     QString coordinates = QString::number(row) + "," + QString::number(column);
 
     MineSweeperButton *buttonPushed = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
+
 
     //Ensure that the button is not flat, that the value is not a mine, that it is allowed to clear (not something that isn't a zero) and it isn't flagged
     if (fieldStatus[row][column] != REVEALED_CELL && game->getValue (row, column) != MINE && allowedClear == true && fieldStatus[row][column] != FLAGGED_CELL)
@@ -458,6 +490,7 @@ void MainWindow::clear(int row, int column, bool allowedClear)
             clear(row+1, column+1, allowedClear);
         }
     }
+    qApp->processEvents();
 }
 
 /**
@@ -495,8 +528,8 @@ void MainWindow::lost() {
                     button->setStyleSheet("color: rgb(0,0,0);" + buttonStyleFlatGrey + buttonFontSmall);
                 }
             }
-
         }
+        qApp->processEvents();
     }
 }
 
@@ -515,13 +548,17 @@ void MainWindow::reset() {
     {
 
         QMessageBox messageBox;
-        int mineAmount =  (fieldHeight * fieldWidth) * 0.927;
+        int mineAmount =  (ui->fieldHeigth->text().toInt() * ui->fieldWidth->text().toInt()) * 0.927;
         messageBox.information(0, "Eingabefehler", "Minenanzahl zu hoch. Maximal 92% des Feldes dürfen Minen sein. Neuer Wert: " + QString::number(mineAmount));
         messageBox.setFixedSize(600,300);
         ui->mineAmount->setValue(mineAmount);
 
         ui->newGame->setDown(false);
         ui->centralWidget->repaint();
+    } else if(ui->fieldHeigth->text().toInt() == fieldHeight &&  ui->fieldWidth->text().toInt() == fieldWidth)
+    {
+        amountOfMines = ui->mineAmount->text().toInt();
+        initMainWindow(true);
     }
     else
     {
@@ -540,7 +577,7 @@ void MainWindow::reset() {
         fieldWidth = ui->fieldWidth->text().toInt();
         amountOfMines = ui->mineAmount->text().toInt();
 
-        initMainWindow();
+        initMainWindow(false);
     }
 }
 
@@ -568,6 +605,7 @@ void MainWindow::won()
                 fieldStatus[i][j] = REVEALED_CELL;
                 button->setText(QString("💣"));
                 button->setStyleSheet(buttonStyleFlatDarkGrey + buttonFontSmall);
+                qApp->processEvents();
             }
 
         }
@@ -679,7 +717,7 @@ void MainWindow::getAllUnmarkedNeighbours(int xCoordinate, int yCoordinate)
 
 }
 
-void MainWindow::markCell(int xCoordinate, int yCoordinate)
+void MainWindow::markCell(QVector<int > unmarkedNeighbor)
 {
 
 }
@@ -703,13 +741,13 @@ void MainWindow::naiveSinglePointSolver()
         }
         for(int x = 0; x < safeCells.size(); x++)
         {
-//            if(automatic radiobutton -> (safeCells[x] zu Qstring -> revealCell() <- flagge oder nicht. x aus S entfernen) an)
-//            {
+            //            if(automatic radiobutton -> (safeCells[x] zu Qstring -> revealCell() <- flagge oder nicht. x aus S entfernen) an)
+            //            {
 
-//            } else single step nach jedem Solve Button click
-//            {
+            //            } else single step nach jedem Solve Button click
+            //            {
 
-//            }
+            //            }
             //safeCells.remove(x); in probe
             getAllUnmarkedNeighbours(xCoordinate, yCoordinate);
 
@@ -733,7 +771,7 @@ void MainWindow::naiveSinglePointSolver()
     }
 }
 
-void MainWindow::allNeighboursAreFree(int xCoordinate, int yCoordinate)
+bool MainWindow::allNeighboursAreFree(int xCoordinate, int yCoordinate)
 {
 
 }
@@ -761,170 +799,170 @@ void MainWindow::calculateProbabilitySinglePoint()
 
 
 
-//    for(int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++)
-//    {
-//        for ( int yCoordinate = 0; yCoordinate < fieldWidth; yCoordinate++)
-//        {
-//            amountOfNeighbour[xCoordinate][yCoordinate] = 0;
+    //    for(int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++)
+    //    {
+    //        for ( int yCoordinate = 0; yCoordinate < fieldWidth; yCoordinate++)
+    //        {
+    //            amountOfNeighbour[xCoordinate][yCoordinate] = 0;
 
-//            if( (game->getValue(xCoordinate, yCoordinate) > 0) && (game->getValue(xCoordinate, yCoordinate) < 9) && (fieldStatus[xCoordinate][yCoordinate] == REVEALED_CELL))
-//            {
-//                //Top left
-//                if ( ((xCoordinate - 1) != -1 && (yCoordinate - 1) != -1) )
-//                {
-//                    if(fieldStatus[xCoordinate - 1][yCoordinate - 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //            if( (game->getValue(xCoordinate, yCoordinate) > 0) && (game->getValue(xCoordinate, yCoordinate) < 9) && (fieldStatus[xCoordinate][yCoordinate] == REVEALED_CELL))
+    //            {
+    //                //Top left
+    //                if ( ((xCoordinate - 1) != -1 && (yCoordinate - 1) != -1) )
+    //                {
+    //                    if(fieldStatus[xCoordinate - 1][yCoordinate - 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Top center
-//                if ( (xCoordinate - 1) != -1)
-//                {
-//                    if(fieldStatus[xCoordinate - 1][yCoordinate] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Top center
+    //                if ( (xCoordinate - 1) != -1)
+    //                {
+    //                    if(fieldStatus[xCoordinate - 1][yCoordinate] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Top right
-//                if ( (xCoordinate - 1) != -1 && (yCoordinate + 1) != fieldWidth)
-//                {
-//                    if(fieldStatus[xCoordinate - 1][yCoordinate + 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Top right
+    //                if ( (xCoordinate - 1) != -1 && (yCoordinate + 1) != fieldWidth)
+    //                {
+    //                    if(fieldStatus[xCoordinate - 1][yCoordinate + 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Left
-//                if ( (yCoordinate - 1) != -1)
-//                {
-//                    if(fieldStatus[xCoordinate][yCoordinate - 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Left
+    //                if ( (yCoordinate - 1) != -1)
+    //                {
+    //                    if(fieldStatus[xCoordinate][yCoordinate - 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Right
-//                if ( (yCoordinate + 1) != fieldWidth)
-//                {
-//                    if(fieldStatus[xCoordinate][yCoordinate + 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Right
+    //                if ( (yCoordinate + 1) != fieldWidth)
+    //                {
+    //                    if(fieldStatus[xCoordinate][yCoordinate + 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Bottom left
-//                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate - 1) != -1)
-//                {
-//                    if(fieldStatus[xCoordinate + 1][yCoordinate - 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Bottom left
+    //                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate - 1) != -1)
+    //                {
+    //                    if(fieldStatus[xCoordinate + 1][yCoordinate - 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Bottom center
-//                if ( (xCoordinate + 1) != fieldHeight)
-//                {
-//                    if(fieldStatus[xCoordinate + 1][yCoordinate] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Bottom center
+    //                if ( (xCoordinate + 1) != fieldHeight)
+    //                {
+    //                    if(fieldStatus[xCoordinate + 1][yCoordinate] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Bottom right
-//                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate + 1) != fieldWidth)
-//                {
-//                    if(fieldStatus[xCoordinate + 1][yCoordinate + 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
-//            }
-//            if((game->getValue(xCoordinate, yCoordinate) > 0) && (game->getValue(xCoordinate, yCoordinate) < 9) && (fieldStatus[xCoordinate][yCoordinate] == REVEALED_CELL))
-//            {
-//                if(game->getValue(xCoordinate,yCoordinate) == amountOfNeighbour[xCoordinate][yCoordinate])
-//                {
-//                    probabilities[xCoordinate][yCoordinate] = 100;
-//                }
-//            } else if(fieldStatus[xCoordinate][yCoordinate] != REVEALED_CELL)
-//            {
-//                //Top left
-//                if ( ((xCoordinate - 1) != -1 && (yCoordinate - 1) != -1) )
-//                {
-//                    if(fieldStatus[xCoordinate - 1][yCoordinate - 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Bottom right
+    //                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate + 1) != fieldWidth)
+    //                {
+    //                    if(fieldStatus[xCoordinate + 1][yCoordinate + 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
+    //            }
+    //            if((game->getValue(xCoordinate, yCoordinate) > 0) && (game->getValue(xCoordinate, yCoordinate) < 9) && (fieldStatus[xCoordinate][yCoordinate] == REVEALED_CELL))
+    //            {
+    //                if(game->getValue(xCoordinate,yCoordinate) == amountOfNeighbour[xCoordinate][yCoordinate])
+    //                {
+    //                    probabilities[xCoordinate][yCoordinate] = 100;
+    //                }
+    //            } else if(fieldStatus[xCoordinate][yCoordinate] != REVEALED_CELL)
+    //            {
+    //                //Top left
+    //                if ( ((xCoordinate - 1) != -1 && (yCoordinate - 1) != -1) )
+    //                {
+    //                    if(fieldStatus[xCoordinate - 1][yCoordinate - 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Top center
-//                if ( (xCoordinate - 1) != -1)
-//                {
-//                    if(fieldStatus[xCoordinate - 1][yCoordinate] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Top center
+    //                if ( (xCoordinate - 1) != -1)
+    //                {
+    //                    if(fieldStatus[xCoordinate - 1][yCoordinate] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Top right
-//                if ( (xCoordinate - 1) != -1 && (yCoordinate + 1) != fieldWidth)
-//                {
-//                    if(fieldStatus[xCoordinate - 1][yCoordinate + 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Top right
+    //                if ( (xCoordinate - 1) != -1 && (yCoordinate + 1) != fieldWidth)
+    //                {
+    //                    if(fieldStatus[xCoordinate - 1][yCoordinate + 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Left
-//                if ( (yCoordinate - 1) != -1)
-//                {
-//                    if(fieldStatus[xCoordinate][yCoordinate - 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Left
+    //                if ( (yCoordinate - 1) != -1)
+    //                {
+    //                    if(fieldStatus[xCoordinate][yCoordinate - 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Right
-//                if ( (yCoordinate + 1) != fieldWidth)
-//                {
-//                    if(fieldStatus[xCoordinate][yCoordinate + 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Right
+    //                if ( (yCoordinate + 1) != fieldWidth)
+    //                {
+    //                    if(fieldStatus[xCoordinate][yCoordinate + 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Bottom left
-//                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate - 1) != -1)
-//                {
-//                    if(fieldStatus[xCoordinate + 1][yCoordinate - 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Bottom left
+    //                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate - 1) != -1)
+    //                {
+    //                    if(fieldStatus[xCoordinate + 1][yCoordinate - 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Bottom center
-//                if ( (xCoordinate + 1) != fieldHeight)
-//                {
-//                    if(fieldStatus[xCoordinate + 1][yCoordinate] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
+    //                //Bottom center
+    //                if ( (xCoordinate + 1) != fieldHeight)
+    //                {
+    //                    if(fieldStatus[xCoordinate + 1][yCoordinate] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
 
-//                //Bottom right
-//                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate + 1) != fieldWidth)
-//                {
-//                    if(fieldStatus[xCoordinate + 1][yCoordinate + 1] != REVEALED_CELL)
-//                    {
-//                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
-//                    }
-//                }
-//            }
+    //                //Bottom right
+    //                if ( (xCoordinate + 1) != fieldHeight && (yCoordinate + 1) != fieldWidth)
+    //                {
+    //                    if(fieldStatus[xCoordinate + 1][yCoordinate + 1] != REVEALED_CELL)
+    //                    {
+    //                        amountOfNeighbour[xCoordinate][yCoordinate] += 1;
+    //                    }
+    //                }
+    //            }
 
-////            setButtonTooltip(xCoordinate,yCoordinate, probabilities[xCoordinate][yCoordinate]);
-//        }
-//    }
+    ////            setButtonTooltip(xCoordinate,yCoordinate, probabilities[xCoordinate][yCoordinate]);
+    //        }
+    //    }
 }
 
 /**

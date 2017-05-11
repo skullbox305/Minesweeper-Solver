@@ -6,10 +6,10 @@ MineSweeperButton::MineSweeperButton(QWidget *parent) : QPushButton(parent)
 {
 }
 
-MineSweeperButton::MineSweeperButton(QString blah) : QPushButton(blah)
-{
+//MineSweeperButton::MineSweeperButton(QString blah) : QPushButton(blah)
+//{
 
-}
+//}
 
 /**
   * mousePressEvent(QMouseEvent*)
@@ -22,6 +22,7 @@ void MineSweeperButton::mousePressEvent(QMouseEvent *qMEvent)
     {
         emit rightButtonClicked();
     }
+
 
     //Do default behavior otherwise
     QPushButton::mousePressEvent(qMEvent);

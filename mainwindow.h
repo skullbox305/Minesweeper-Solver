@@ -66,9 +66,8 @@ private:
 
     QVector< QVector<int> > safeCells;
     QVector< QVector<int> > unmarkedNeighbors;
-    QVector2D <int, int> test123;
 
-    void initMainWindow();
+    void initMainWindow(bool reinitialize);
     void lost();
     void won();
     void clear(int, int, bool);
@@ -82,7 +81,7 @@ private:
     bool allNeighboursAreMines(int xCoordinate, int yCoordinate);
     bool allNeighboursAreFree(int xCoordinate, int yCoordinate);
     void getAllUnmarkedNeighbours(int xCoordinate, int yCoordinate);
-    void markCell(QVector< QVector <int> > unmarkedNeighbor);
+    void markCell(QVector<int> unmarkedNeighbor);
     void naiveSinglePointSolver();
 
 private slots:
