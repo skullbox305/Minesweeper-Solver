@@ -3,6 +3,7 @@
 #define MINE 9
 
 #include <QVector>
+#include <time.h>
 
 class Minesweeper
 {

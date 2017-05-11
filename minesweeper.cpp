@@ -35,6 +35,7 @@ Minesweeper::~Minesweeper()
   */
 void Minesweeper::generateBoard(bool firstClickSafe, int xFirstClick, int yFirstClick)
 {
+     qsrand(time(NULL));
     //Generate ten mines and create its adjacent number list
     for( int i = 0; i < amountOfMines; i++)
     {
@@ -43,6 +44,7 @@ void Minesweeper::generateBoard(bool firstClickSafe, int xFirstClick, int yFirst
         //Prevent generating mine on another mine
         do
         {
+
             xCoordinate = qrand() % fieldHeight;
             yCoordinate = qrand() % fieldWidth;
         }while ( (mineBoard[xCoordinate][yCoordinate] == MINE) || ( (firstClickSafe && (xCoordinate == xFirstClick) && (yCoordinate == yFirstClick)) ));

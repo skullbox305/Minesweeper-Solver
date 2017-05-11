@@ -59,10 +59,14 @@ private:
     int fieldWidth;
     int amountOfMines;
 
-    QVector< QVector<int> > fieldStatus;
-    QVector< QVector<int> > mineBoard;
-    QVector< QVector<float> > probabilities;
-    QVector< QVector<int> > amountOfNeighbour;
+    QVector< QVector<int> > fieldStatus; //BLANK_CELL, FLAGGED_CELL, QUESTION_CELL or REVEALED_CELL
+    QVector< QVector<int> > mineBoard; //Zahl zwischen 0-9. 0-8 ist klar, 9 Mine
+    QVector< QVector<float> > probabilities; //wahrscheinlichkeiten für eine Mine
+    QVector< QVector<int> > amountOfNeighbour; // Anzahl der nicht aufgedeckten Nachbarn eines aufgedeckten Feldes mit einer Zahl zwischen 1-8
+
+    QVector< QVector<int> > safeCells;
+    QVector< QVector<int> > unmarkedNeighbors;
+    QVector2D <int, int> test123;
 
     void initMainWindow();
     void lost();
@@ -74,6 +78,12 @@ private:
     void calculateProbabilitiesForAll();
     void calculateProbabilitySinglePoint();
     void setButtonTooltip(int xCoordinate, int yCoordinate, float probability);
+
+    bool allNeighboursAreMines(int xCoordinate, int yCoordinate);
+    bool allNeighboursAreFree(int xCoordinate, int yCoordinate);
+    void getAllUnmarkedNeighbours(int xCoordinate, int yCoordinate);
+    void markCell(QVector< QVector <int> > unmarkedNeighbor);
+    void naiveSinglePointSolver();
 
 private slots:
     void hasRightClicked(QString);

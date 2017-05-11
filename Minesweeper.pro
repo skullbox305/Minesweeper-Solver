@@ -8,10 +8,12 @@ TEMPLATE = app
 SOURCES += main.cpp \
     mainwindow.cpp \
     minesweeper.cpp \
-    minesweeperbutton.cpp
+    minesweeperbutton.cpp \
+    solver.cpp
 HEADERS += mainwindow.h \
     minesweeper.h \
-    minesweeperbutton.h
+    minesweeperbutton.h \
+    solver.h
 FORMS += mainwindow.ui
 RESOURCES += \
     images.qrc
