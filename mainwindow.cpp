@@ -26,10 +26,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Layout designs
     ui->mineContainer->setSpacing(2); //Forces the board cells to be spaced next to each other
+    //ui->widget->hide();
 
     //Connect the UI elements
     connect(ui->newGame, SIGNAL(pressed()), this, SLOT(reset()));
     connect(ui->showMines, SIGNAL(clicked()), this, SLOT(showMinesIfChecked()));
+    connect(ui->gameoptions, SIGNAL(pressed()), this, SLOT(showGamemenu()));
 
 
     //We will need to map the click to an object's coordinates
@@ -578,6 +580,19 @@ void MainWindow::reset() {
         amountOfMines = ui->mineAmount->text().toInt();
 
         initMainWindow(false);
+    }
+}
+
+void MainWindow::showGamemenu()
+{
+    if(ui->widget->isVisible())
+    {
+       ui->widget->hide();
+       ui->gameoptions->setText("Show menu");
+    } else
+    {
+        ui->widget->show();
+        ui->gameoptions->setText("Hide menu");
     }
 }
 

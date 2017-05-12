@@ -87,6 +87,7 @@ private:
 private slots:
     void hasRightClicked(QString);
     void reset();
+    void showGamemenu();
 
 public slots:
 
