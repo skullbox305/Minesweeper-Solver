@@ -18,8 +18,15 @@
 #include <QSignalMapper>
 #include "minesweeper.h"
 #include "minesweeperbutton.h"
+#include "solver.h"
 #include <QVector>
 #include <QMessageBox>
+
+
+
+
+
+class Solver;
 
 namespace Ui {
     class MainWindow;
@@ -30,7 +37,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+    void testPrint();
 
 protected:
     void changeEvent(QEvent *e);
@@ -38,6 +45,8 @@ protected:
 private:
     Ui::MainWindow *ui;
     Minesweeper *game;
+    Solver *so;
+
     QSignalMapper *signalMapperLeftClick;
     QSignalMapper *signalMapperRightClick;
     QSignalMapper *signalMapperShowMines;
@@ -64,9 +73,6 @@ private:
     QVector< QVector<float> > probabilities; //wahrscheinlichkeiten für eine Mine
     QVector< QVector<int> > amountOfNeighbour; // Anzahl der nicht aufgedeckten Nachbarn eines aufgedeckten Feldes mit einer Zahl zwischen 1-8
 
-    QVector< QVector<int> > safeCells;
-    QVector< QVector<int> > unmarkedNeighbors;
-
     void initMainWindow(bool reinitialize);
     void lost();
     void won();
@@ -78,20 +84,24 @@ private:
     void calculateProbabilitySinglePoint();
     void setButtonTooltip(int xCoordinate, int yCoordinate, float probability);
 
-    bool allNeighboursAreMines(int xCoordinate, int yCoordinate);
-    bool allNeighboursAreFree(int xCoordinate, int yCoordinate);
-    void getAllUnmarkedNeighbours(int xCoordinate, int yCoordinate);
-    void markCell(QVector<int> unmarkedNeighbor);
-    void naiveSinglePointSolver();
+
+//    bool allNeighboursAreMines(int xCoordinate, int yCoordinate);
+//    bool allNeighboursAreFree(int xCoordinate, int yCoordinate);
+//    void getAllUnmarkedNeighbours(int xCoordinate, int yCoordinate);
+//    void markCell(QVector<int> unmarkedNeighbor);
+//    void naiveSinglePointSolver();
 
 private slots:
     void hasRightClicked(QString);
     void reset();
     void showGamemenu();
+    void showColorLegend();
+    void setSolverMode();
+    void solverStart();
 
 public slots:
 
-    void revealCell(QString);
+    void revealCell(QString); // wieso public?
     void showMinesIfChecked();
 
 

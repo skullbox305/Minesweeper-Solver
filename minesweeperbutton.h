@@ -8,6 +8,7 @@ class MineSweeperButton : public QPushButton
     Q_OBJECT
 public:
     MineSweeperButton(QWidget* = 0);
+     ~MineSweeperButton();
     //MineSweeperButton(QString);
 
 signals:

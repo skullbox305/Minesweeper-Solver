@@ -6,6 +6,11 @@ MineSweeperButton::MineSweeperButton(QWidget *parent) : QPushButton(parent)
 {
 }
 
+MineSweeperButton::~MineSweeperButton()
+{
+
+}
+
 //MineSweeperButton::MineSweeperButton(QString blah) : QPushButton(blah)
 //{
 
