@@ -3,6 +3,7 @@
 #define MINE 9
 
 #include <QVector>
+#include <QObject>
 #include <time.h>
 
 class Minesweeper
@@ -13,6 +14,7 @@ public:
     void generateBoard(bool firstClickSafe, int xFirstClick, int yFirstClick);
     bool isMine(int, int);
     int getValue(int, int);
+    QVector< QVector<int> > getMineBoard();
 
 private:
     int fieldHeight;
@@ -20,6 +22,7 @@ private:
     int amountOfMines;
 
     QVector< QVector<int> > mineBoard;
+
 
 };
 

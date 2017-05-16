@@ -19,14 +19,9 @@
 #include "minesweeper.h"
 #include "minesweeperbutton.h"
 #include "solver.h"
-#include <QVector>
 #include <QMessageBox>
+#include <QVector>
 
-
-
-
-
-class Solver;
 
 namespace Ui {
     class MainWindow;
@@ -37,7 +32,6 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void testPrint();
 
 protected:
     void changeEvent(QEvent *e);
@@ -84,13 +78,6 @@ private:
     void calculateProbabilitySinglePoint();
     void setButtonTooltip(int xCoordinate, int yCoordinate, float probability);
 
-
-//    bool allNeighboursAreMines(int xCoordinate, int yCoordinate);
-//    bool allNeighboursAreFree(int xCoordinate, int yCoordinate);
-//    void getAllUnmarkedNeighbours(int xCoordinate, int yCoordinate);
-//    void markCell(QVector<int> unmarkedNeighbor);
-//    void naiveSinglePointSolver();
-
 private slots:
     void hasRightClicked(QString);
     void reset();
@@ -102,8 +89,13 @@ private slots:
 public slots:
 
     void revealCell(QString); // wieso public?
+    void markCell(int row, int column);
     void showMinesIfChecked();
+    void testPrint(QString);
 
+signals:
+    void sendGameStatus(bool finished);
+    void sendFieldStatus(QVector< QVector<int> > _fieldStatus);
 
 };
 

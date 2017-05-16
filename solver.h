@@ -6,23 +6,44 @@
 #define REVEALED_CELL 3
 #define MINE 9
 
+#include <QObject>
 #include <QVector>
-#include "mainwindow.h"
+#include "time.h"
 
-class Solver
+class Solver : public QObject
 {
+    Q_OBJECT
 public:
-    Solver();
+    Solver(QObject *parent);
     ~Solver();
 
+    void startSolver(int _fieldWidth, int _fieldHeight);
+    void setMineBoard(QVector< QVector<int> > _mineboard);
 
-    bool allNeighboursAreMines(int xCoordinate, int yCoordinate);
-    bool allNeighboursAreFree(int xCoordinate, int yCoordinate);
-    void getAllUnmarkedNeighbours(int xCoordinate, int yCoordinate);
-    void markCell(QVector<int> unmarkedNeighbor);
-    void naiveSinglePointSolver();
+
+signals:
+    void probe(QString coordinate);
+    void markCell(int row, int column);
+
+public slots:
+    void setGameStatus(bool finished);
+    void setFieldStatus(QVector< QVector<int> > fieldStatus);
+
 
 private:
+    QVector< QVector<int> > safeCells;
+    QVector< QVector<int> > unmarkedNeighbors;
+
+    bool hasFinished;
+    int fieldHeight;
+    int fieldWidth;
+    QVector< QVector<int> > fieldStatus;
+    QVector< QVector<int> > mineboard;
+
+    void naiveSinglePointSolver();
+    bool allNeighborsAreMines(int row, int column);
+    bool allNeighborsAreFree(int row, int column);
+    void getAllUnmarkedNeighbors(int row, int column);
 
 };
 

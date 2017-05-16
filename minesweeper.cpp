@@ -119,3 +119,8 @@ int Minesweeper::getValue(int xCoordinate, int yCoordinate)
     return mineBoard[xCoordinate][yCoordinate];
 }
 
+QVector<QVector<int> > Minesweeper::getMineBoard()
+{
+    return mineBoard;
+}
+

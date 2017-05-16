@@ -1,9 +1,9 @@
 #include "solver.h"
+#include <unistd.h>
+#include <iostream>
 
-
-Solver::Solver()
+Solver::Solver(QObject *parent) : QObject(parent)
 {
-
 
 }
 
@@ -11,156 +11,370 @@ Solver::~Solver()
 {
 }
 
-//bool solver::allNeighboursAreMines(int xCoordinate, int yCoordinate)
-//{
-//    int amountOfNeighbourMines = 0;
-//    bool result = false;
+void Solver::startSolver(int _fieldWidth, int _fieldHeight)
+{
+    fieldWidth = _fieldWidth;
+    fieldHeight = _fieldHeight;
+    naiveSinglePointSolver();
+}
 
-//    //Top left
-//    if ( ((xCoordinate - 1) != -1 && (yCoordinate - 1) != -1) )
-//    {
-//        if(fieldStatus[xCoordinate - 1][yCoordinate - 1] != REVEALED_CELL)
-//        {
-//            amountOfNeighbourMines += 1;
-//        }
-//    }
+void Solver::setMineBoard(QVector<QVector<int> > _mineboard)
+{
+    mineboard = _mineboard;
+}
 
-//    //Top center
-//    if ( (xCoordinate - 1) != -1)
-//    {
-//        if(fieldStatus[xCoordinate - 1][yCoordinate] != REVEALED_CELL)
-//        {
-//            amountOfNeighbourMines += 1;
-//        }
-//    }
+void Solver::setGameStatus(bool finished)
+{
+    hasFinished = finished;
+    //std::cout << "test" << std::endl;
+}
 
-//    //Top right
-//    if ( (xCoordinate - 1) != -1 && (yCoordinate + 1) != fieldWidth)
-//    {
-//        if(fieldStatus[xCoordinate - 1][yCoordinate + 1] != REVEALED_CELL)
-//        {
-//            amountOfNeighbourMines += 1;
-//        }
-//    }
+void Solver::setFieldStatus(QVector<QVector<int> > _fieldStatus)
+{
+    fieldStatus = _fieldStatus;
+    //std::cout << "test" << std::endl;
+}
 
-//    //Left
-//    if ( (yCoordinate - 1) != -1)
-//    {
-//        if(fieldStatus[xCoordinate][yCoordinate - 1] != REVEALED_CELL)
-//        {
-//            amountOfNeighbourMines += 1;
-//        }
-//    }
 
-//    //Right
-//    if ( (yCoordinate + 1) != fieldWidth)
-//    {
-//        if(fieldStatus[xCoordinate][yCoordinate + 1] != REVEALED_CELL)
-//        {
-//            amountOfNeighbourMines += 1;
-//        }
-//    }
 
-//    //Bottom left
-//    if ( (xCoordinate + 1) != fieldHeight && (yCoordinate - 1) != -1)
-//    {
-//        if(fieldStatus[xCoordinate + 1][yCoordinate - 1] != REVEALED_CELL)
-//        {
-//            amountOfNeighbourMines += 1;
-//        }
-//    }
 
-//    //Bottom center
-//    if ( (xCoordinate + 1) != fieldHeight)
-//    {
-//        if(fieldStatus[xCoordinate + 1][yCoordinate] != REVEALED_CELL)
-//        {
-//            amountOfNeighbourMines += 1;
-//        }
-//    }
+bool Solver::allNeighborsAreMines(int row, int column)
+{
+    int amountOfNeighborMines = 0;
+    bool result = false;
 
-//    //Bottom right
-//    if ( (xCoordinate + 1) != fieldHeight && (yCoordinate + 1) != fieldWidth)
-//    {
-//        if(fieldStatus[xCoordinate + 1][yCoordinate + 1] != REVEALED_CELL)
-//        {
-//            amountOfNeighbourMines += 1;
-//        }
-//    }
+    //Top left
+    if ( ((row - 1) != -1 && (column - 1) != -1) )
+    {
+        if(fieldStatus[row - 1][column - 1] != REVEALED_CELL)
+        {
+            amountOfNeighborMines += 1;
+        }
+    }
 
-//    if(game->getValue(xCoordinate, yCoordinate) == amountOfNeighbourMines)
-//    {
-//        result = true;
-//    }
+    //Top center
+    if ( (row - 1) != -1)
+    {
+        if(fieldStatus[row - 1][column] != REVEALED_CELL)
+        {
+            amountOfNeighborMines += 1;
+        }
+    }
 
-//    return result;
-//}
+    //Top right
+    if ( (row - 1) != -1 && (column + 1) != fieldWidth)
+    {
+        if(fieldStatus[row - 1][column + 1] != REVEALED_CELL)
+        {
+            amountOfNeighborMines += 1;
+        }
+    }
 
-//void solver::getAllUnmarkedNeighbours(int xCoordinate, int yCoordinate)
-//{
+    //Left
+    if ( (column - 1) != -1)
+    {
+        if(fieldStatus[row][column - 1] != REVEALED_CELL)
+        {
+            amountOfNeighborMines += 1;
+        }
+    }
 
-//}
+    //Right
+    if ( (column + 1) != fieldWidth)
+    {
+        if(fieldStatus[row][column + 1] != REVEALED_CELL)
+        {
+            amountOfNeighborMines += 1;
+        }
+    }
 
-//void solver::markCell(QVector<int > unmarkedNeighbor)
-//{
+    //Bottom left
+    if ( (row + 1) != fieldHeight && (column - 1) != -1)
+    {
+        if(fieldStatus[row + 1][column - 1] != REVEALED_CELL)
+        {
+            amountOfNeighborMines += 1;
+        }
+    }
 
-//}
+    //Bottom center
+    if ( (row + 1) != fieldHeight)
+    {
+        if(fieldStatus[row + 1][column] != REVEALED_CELL)
+        {
+            amountOfNeighborMines += 1;
+        }
+    }
 
-//void solver::naiveSinglePointSolver()
-//{
-//    int xCoordinate, yCoordinate;
-//    qsrand(time(NULL));
+    //Bottom right
+    if ( (row + 1) != fieldHeight && (column + 1) != fieldWidth)
+    {
+        if(fieldStatus[row + 1][column + 1] != REVEALED_CELL)
+        {
+            amountOfNeighborMines += 1;
+        }
+    }
 
-//    while (!hasFinished)
-//    {
-//        if(safeCells.isEmpty())
-//        {
-//            xCoordinate = qrand() % fieldHeight;
-//            yCoordinate = qrand() % fieldWidth;
+    if(/*game->getValue(row, column)*/ mineboard[row][column] == amountOfNeighborMines)
+    {
+        result = true;
+    }
 
-//            QVector <int> temp(QVector<int>(2));
-//            temp[0] = xCoordinate;
-//            temp[1] = yCoordinate;
-//            safeCells.append(temp);
-//        }
-//        for(int x = 0; x < safeCells.size(); x++)
-//        {
-//            //            if(automatic radiobutton -> (safeCells[x] zu Qstring -> revealCell() <- flagge oder nicht. x aus S entfernen) an)
-//            //            {
+    return result;
+}
 
-//            //            } else single step nach jedem Solve Button click
-//            //            {
+void Solver::getAllUnmarkedNeighbors(int row, int column)
+{
+    QVector <int> temp(QVector<int>(2));
 
-//            //            }
-//            //safeCells.remove(x); in probe
-//            getAllUnmarkedNeighbours(xCoordinate, yCoordinate);
+    //Top left
+    if ( ((row - 1) != -1 && (row - 1) != -1) )
+    {
+        if((fieldStatus[row - 1][column - 1] != REVEALED_CELL) && (fieldStatus[row - 1][column - 1] != FLAGGED_CELL) )
+        {
+            temp[0] = row - 1;
+            temp[1] = column - 1;
+            unmarkedNeighbors.append(temp);
+        }
+    }
 
-//            if(allNeighboursAreFree(xCoordinate, yCoordinate))
-//            {
-//                for(int y = 0; y < unmarkedNeighbors.size(); y++)
-//                {
-//                    safeCells.append(unmarkedNeighbors[y]);
-//                }
-//            } else if(allNeighboursAreMines(xCoordinate, yCoordinate))
-//            {
-//                for(int y = 0; y < unmarkedNeighbors.size(); y++)
-//                {
-//                    markCell(unmarkedNeighbors[y]);
-//                }
-//            } else
-//            {
-//                //ignore x
-//            }
-//        }
-//    }
-//}
+    //Top center
+    if ( (row - 1) != -1)
+    {
+        if((fieldStatus[row - 1][column] != REVEALED_CELL) && (fieldStatus[row - 1][column] != FLAGGED_CELL))
+        {
+            temp[0] = row - 1;
+            temp[1] = column;
+            unmarkedNeighbors.append(temp);
+        }
+    }
 
-//bool solver::allNeighboursAreFree(int xCoordinate, int yCoordinate)
-//{
+    //Top right
+    if ( (row - 1) != -1 && (column + 1) != fieldWidth)
+    {
+        if((fieldStatus[row - 1][column + 1] != REVEALED_CELL) && (fieldStatus[row - 1][column + 1] != FLAGGED_CELL))
+        {
+            temp[0] = row - 1;
+            temp[1] = column + 1;
+            unmarkedNeighbors.append(temp);
+        }
+    }
 
-//}
+    //Left
+    if ( (column - 1) != -1)
+    {
+        if((fieldStatus[row ][column - 1] != REVEALED_CELL) && (fieldStatus[row][column - 1] != FLAGGED_CELL))
+        {
+            temp[0] = row;
+            temp[1] = column - 1;
+            unmarkedNeighbors.append(temp);
+        }
+    }
 
-//void solver::calculateProbabilitiesForAll()
+    //Right
+    if ( (column + 1) != fieldWidth)
+    {
+        if((fieldStatus[row + 1][column] != REVEALED_CELL) && (fieldStatus[row + 1][column] != FLAGGED_CELL))
+        {
+            temp[0] = row;
+            temp[1] = column + 1;
+            unmarkedNeighbors.append(temp);
+        }
+    }
+
+    //Bottom left
+    if ( (row + 1) != fieldHeight && (column - 1) != -1)
+    {
+        if((fieldStatus[row + 1][column - 1] != REVEALED_CELL) && (fieldStatus[row + 1][column - 1] != FLAGGED_CELL))
+        {
+            temp[0] = row + 1;
+            temp[1] = column - 1;
+            unmarkedNeighbors.append(temp);
+        }
+    }
+
+    //Bottom center
+    if ( (row + 1) != fieldHeight)
+    {
+        if((fieldStatus[row + 1][column] != REVEALED_CELL) && (fieldStatus[row + 1][column] != FLAGGED_CELL))
+        {
+            temp[0] = row + 1;
+            temp[1] = column;
+            unmarkedNeighbors.append(temp);
+        }
+    }
+
+    //Bottom right
+    if ( (row + 1) != fieldHeight && (column + 1) != fieldWidth)
+    {
+        if((fieldStatus[row + 1][column + 1] != REVEALED_CELL) && (fieldStatus[row + 1][column + 1] != FLAGGED_CELL))
+        {
+            temp[0] = row + 1;
+            temp[1] = column + 1;
+            unmarkedNeighbors.append(temp);
+        }
+    }
+}
+
+void Solver::naiveSinglePointSolver()
+{
+    int row, column;
+    qsrand(time(NULL));
+
+    while (!hasFinished)
+    {
+        if(safeCells.isEmpty())
+        {
+            row = qrand() % fieldHeight;
+            column = qrand() % fieldWidth;
+
+            QVector <int> temp(QVector<int>(2));
+            temp[0] = row;
+            temp[1] = column;
+            safeCells.append(temp);
+            std::cout << "zufall" << std::endl;
+            sleep(1);
+        }
+        for(int x = 0; x < safeCells.size(); x++)
+        {
+            sleep(1);
+            QString coordinate = QString::number(safeCells[x][0])+","+QString::number(safeCells[x][1]); //Coordinate of the button
+            emit probe(coordinate);
+
+
+            if(hasFinished) {
+                return;
+            }
+
+
+            //if(automatic radiobutton -> (safeCells[x] zu Qstring -> revealCell() <- flagge oder nicht. x aus S entfernen) an)
+            //            {
+
+            //            } else single step nach jedem Solve Button click
+            //            {
+
+            //            }
+            //safeCells.remove(x); in probe
+
+            getAllUnmarkedNeighbors(safeCells[x][0], safeCells[x][1]);
+
+            if(allNeighborsAreFree(safeCells[x][0], safeCells[x][1]))
+            {
+                for(int y = 0; y < unmarkedNeighbors.size(); y++)
+                {
+                    safeCells.append(unmarkedNeighbors[y]);
+                }
+
+            } else if(allNeighborsAreMines(safeCells[x][0], safeCells[x][1]))
+            {
+                for(int y = 0; y < unmarkedNeighbors.size(); y++)
+                {
+                    markCell(unmarkedNeighbors[y][0],unmarkedNeighbors[y][1] );
+                }
+
+            } else
+            {
+                //ignore x
+                std::cout << "test" << std::endl;
+                //hasFinished = true;
+            }
+            safeCells.remove(x);
+        }
+    }
+}
+
+bool Solver::allNeighborsAreFree(int row, int column)
+{
+    int amountOfNeighboursFlagged = 0;
+    bool result = false;
+
+    //Top left
+    if ( ((row - 1) != -1 && (column - 1) != -1) )
+    {
+        if(fieldStatus[row - 1][column - 1] == FLAGGED_CELL)
+        {
+            amountOfNeighboursFlagged += 1;
+        }
+    }
+
+    //Top center
+    if ( (row - 1) != -1)
+    {
+        if(fieldStatus[row - 1][column] == FLAGGED_CELL)
+        {
+            amountOfNeighboursFlagged += 1;
+        }
+    }
+
+    //Top right
+    if ( (row - 1) != -1 && (column + 1) != fieldWidth)
+    {
+        if(fieldStatus[row - 1][column + 1] == FLAGGED_CELL)
+        {
+            amountOfNeighboursFlagged += 1;
+        }
+    }
+
+    //Left
+    if ( (column - 1) != -1)
+    {
+        if(fieldStatus[row][column - 1] == FLAGGED_CELL)
+        {
+            amountOfNeighboursFlagged += 1;
+        }
+    }
+
+    //Right
+    if ( (column + 1) != fieldWidth)
+    {
+        if(fieldStatus[row][column + 1] == FLAGGED_CELL)
+        {
+            amountOfNeighboursFlagged += 1;
+        }
+    }
+
+    //Bottom left
+    if ( (row + 1) != fieldHeight && (column - 1) != -1)
+    {
+        if(fieldStatus[row + 1][column - 1] == FLAGGED_CELL)
+        {
+            amountOfNeighboursFlagged += 1;
+        }
+    }
+
+    //Bottom center
+    if ( (row + 1) != fieldHeight)
+    {
+        if(fieldStatus[row + 1][column] == FLAGGED_CELL)
+        {
+            amountOfNeighboursFlagged += 1;
+        }
+    }
+
+    //Bottom right
+    if ( (row + 1) != fieldHeight && (column + 1) != fieldWidth)
+    {
+        if(fieldStatus[row + 1][column + 1] == FLAGGED_CELL)
+        {
+            amountOfNeighboursFlagged += 1;
+        }
+    }
+
+    if(/*game->getValue(row, column)*/ mineboard[row][column] == amountOfNeighboursFlagged)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+
+
+
+
+
+
+//void Solver::calculateProbabilitiesForAll()
 //{
 //    for(int xCoordinate = 0; xCoordinate < fieldHeight; xCoordinate++)
 //    {
@@ -177,7 +391,7 @@ Solver::~Solver()
 //    calculateProbabilitySinglePoint();
 //}
 
-//void solver::calculateProbabilitySinglePoint()
+//void Solver::calculateProbabilitySinglePoint()
 //{
 
 

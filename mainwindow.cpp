@@ -11,10 +11,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    so = new Solver(this);
+
     fieldWidth = 10;
     fieldHeight = 10;
     amountOfMines = 10;
-
 
     buttonStyleFlatBlue = "background-color: rgb(111, 193, 255); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;";
     buttonStyleFlatGrey = "background-color: rgb(212, 212, 212); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;";
@@ -30,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->solverStartButton->setStyleSheet(buttonStyleFlatBlue + buttonFontSmall + "color: rgb(0,0,0);");
     ui->newGame->setStyleSheet(buttonStyleFlatBlue + buttonFontSmall + "color: rgb(0,0,0);");
 
-
     //Connect the UI elements
     connect(ui->newGame, SIGNAL(released()), this, SLOT(reset()));
     connect(ui->showMines, SIGNAL(clicked()), this, SLOT(showMinesIfChecked()));
@@ -39,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radioButton_SolverAuto, SIGNAL(clicked()), this, SLOT(setSolverMode()));
     connect(ui->radioButton_SolverManual, SIGNAL(clicked()), this, SLOT(setSolverMode()));
     connect(ui->solverStartButton, SIGNAL(clicked()), this, SLOT(solverStart()));
+
+    connect(so, SIGNAL(probe(QString)), this, SLOT(revealCell(QString)));
+    connect(so, SIGNAL(markCell(int,int)), this, SLOT(markCell(int,int)));
+    connect(this, SIGNAL(sendGameStatus(bool)), so, SLOT(setGameStatus(bool)));
+    connect(this, SIGNAL(sendFieldStatus(QVector<QVector<int> >)), so, SLOT(setFieldStatus(QVector<QVector<int> >)));
 
     showColorLegend();
     setSolverMode();
@@ -53,12 +58,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapperRightClick, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString)));
 
     initMainWindow(false);
+
 }
 
 void MainWindow::initMainWindow(bool reinitialize)
 {
     //Global variables
     hasFinished = false; //Has the game finished?
+    emit sendGameStatus(hasFinished);
+    //sendGameStatus(hasFinished);
+
     hasStarted = false;
     cellsRevealed = 0; //Number of current cells revealed
     flagsFlagged = 0; //Number of flags that have been flagged
@@ -74,8 +83,6 @@ void MainWindow::initMainWindow(bool reinitialize)
     game = new Minesweeper(fieldWidth, fieldHeight, amountOfMines, mineBoard);
 
 
-
-
     //Initialize statuses
     // 0 = Empty, 1 = flagged, 2 = ?
     for ( int i = 0; i < fieldHeight; i++)
@@ -83,6 +90,8 @@ void MainWindow::initMainWindow(bool reinitialize)
         for ( int j = 0; j < fieldWidth; j++)
         {
             fieldStatus[i][j] = BLANK_CELL;
+            emit sendFieldStatus(fieldStatus);
+
             probabilities[i][j] = i+j;
             amountOfNeighbour[i][j] = 0;
 
@@ -192,6 +201,7 @@ void MainWindow::createGameVectors(int fieldWidth, int fieldHeight)
         }
     }
     fieldStatus = result;
+    emit sendFieldStatus(fieldStatus);
     mineBoard = result;
     amountOfNeighbour = result;
     probabilities = result1;
@@ -231,6 +241,7 @@ void MainWindow::hasRightClicked(QString coordinates)
                 buttonPushed->setText(QString("⚑"));
                 buttonPushed->setStyleSheet("background-color: rgb(231, 197, 77); color: rgb(199, 0, 0); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
                 fieldStatus[row][column] = FLAGGED_CELL;
+                emit sendFieldStatus(fieldStatus);
 
                 ui->lcdFlagCount->display( amountOfMines - flagsFlagged );
 
@@ -249,6 +260,8 @@ void MainWindow::hasRightClicked(QString coordinates)
                 buttonPushed->setStyleSheet("background-color: rgb(169, 225, 70); color: rgb(0,0,0); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
 
                 fieldStatus[row][column] = QUESTION_CELL;
+                emit sendFieldStatus(fieldStatus);
+
             } else if ( fieldStatus[row][column] == QUESTION_CELL )
             {
                 ui->lcdFlagCount->display( amountOfMines - flagsFlagged );
@@ -264,12 +277,29 @@ void MainWindow::hasRightClicked(QString coordinates)
                 }
 
                 fieldStatus[row][column] = BLANK_CELL;
+                emit sendFieldStatus(fieldStatus);
             }
         }
         buttonPushed->clearFocus();
     }
 }
 
+void MainWindow::markCell(int row, int column)
+{
+    QString coordinates = QString::number(row)+","+QString::number(column); //Coordinate of the button
+    MineSweeperButton *button = qobject_cast<MineSweeperButton *>(signalMapperLeftClick->mapping(coordinates));
+
+    //We are now flagging the cell as it was blank
+    flagsFlagged++;
+
+    button->setText(QString("⚑"));
+    button->setStyleSheet("background-color: rgb(231, 197, 77); color: rgb(199, 0, 0); border-style: solid; border-color: black; border-width: 1px; border-radius: 5px;" + buttonFontBig);
+    fieldStatus[row][column] = FLAGGED_CELL;
+    emit sendFieldStatus(fieldStatus);
+
+    ui->lcdFlagCount->display( amountOfMines - flagsFlagged );
+
+}
 
 /**
   * revealCell()
@@ -292,6 +322,8 @@ void MainWindow::revealCell(QString coordinates)
         {
             hasStarted = true;
             game->generateBoard(ui->firstClickSafe->isChecked(), xCoordinate, yCoordinate);
+            so->setMineBoard(game->getMineBoard());
+
             showMinesIfChecked();
 
         }
@@ -335,6 +367,7 @@ void MainWindow::revealCell(QString coordinates)
 
         //buttonPushed->setFlat(true);    // if revealed, set button flat !"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         fieldStatus[xCoordinate][yCoordinate] = REVEALED_CELL;
+        emit sendFieldStatus(fieldStatus);
 
         //If we reveal a mine, we just lost :(
         if ( game->isMine( xCoordinate, yCoordinate ) )
@@ -425,13 +458,17 @@ void MainWindow::showMinesIfChecked()
                         button->setStyleSheet(buttonStyleFlatBlue);
                     }
                 }
-                qApp->processEvents();
             }
 
         }
         ui->scrollArea->show();
     }
 
+}
+
+void MainWindow::testPrint(QString test)
+{
+ std::cout << test.toStdString() << std::endl;
 }
 
 /**
@@ -454,7 +491,7 @@ void MainWindow::clear(int row, int column, bool allowedClear)
     {
         //buttonPushed->setFlat (true); //We're now flat
         fieldStatus[row][column] = REVEALED_CELL;
-
+        emit sendFieldStatus(fieldStatus);
         //Set the image according to the value of the cell
         changeIcon(buttonPushed, row, column);
 
@@ -510,8 +547,8 @@ void MainWindow::clear(int row, int column, bool allowedClear)
   * Handles losing the game
   */
 void MainWindow::lost() {
-    hasFinished = true;
-    hasFinished = true;
+    hasFinished = true;    
+    emit sendGameStatus(hasFinished);
 
     //Go through all the cells and reveal all the mines
     for ( int i = 0; i < fieldHeight; i++ )
@@ -527,16 +564,17 @@ void MainWindow::lost() {
             {
                 //button->setFlat (true);
                 fieldStatus[i][j] = REVEALED_CELL;
+                emit sendFieldStatus(fieldStatus);
 
-                //Are we flagged? Good job! you find a mine and flagged it :)
-                if ( fieldStatus[i][j] == FLAGGED_CELL ) {
-                    button->setText(QString("💣"));
-                    button->setStyleSheet("color: rgb(0,150,0);" + buttonStyleFlatGrey + buttonFontSmall);
-                } else {
-                    //BOO!! You didn't find this mine!
-                    button->setText(QString("💣"));
-                    button->setStyleSheet("color: rgb(0,0,0);" + buttonStyleFlatGrey + buttonFontSmall);
-                }
+//                //Are we flagged? Good job! you find a mine and flagged it :)
+//                if ( fieldStatus[i][j] == FLAGGED_CELL ) {
+//                    button->setText(QString("💣"));
+//                    button->setStyleSheet("color: rgb(0,150,0);" + buttonStyleFlatGrey + buttonFontSmall);
+//                } else {
+//                    //BOO!! You didn't find this mine!
+//                    button->setText(QString("💣"));
+//                    button->setStyleSheet("color: rgb(0,0,0);" + buttonStyleFlatGrey + buttonFontSmall);
+//                }
             }
         }
         //qApp->processEvents();
@@ -553,6 +591,8 @@ void MainWindow::lost() {
 void MainWindow::reset() {
     //Reset global variables
     hasFinished = false;
+    emit sendGameStatus(hasFinished);
+
     cellsRevealed = 0;
     flagsFlagged = 0;
     minesFlagged = 0;
@@ -655,11 +695,10 @@ void MainWindow::solverStart()
 {
     if(ui->radioButton_SolverAuto->isChecked())
     {
-        QMessageBox messageBox;
-        messageBox.information(0, "test", "afafaf");
         if(ui->solverStartButton->text() == "Start Solver")
         {
             ui->solverStartButton->setText("Stop Solver");
+            so->startSolver(fieldWidth, fieldHeight);
         }
         else
         {
@@ -680,6 +719,7 @@ void MainWindow::solverStart()
 void MainWindow::won()
 {
     hasFinished = true;
+    emit sendGameStatus(hasFinished);
 
     ui->lcdFlagCount->display (0);
 
@@ -695,6 +735,8 @@ void MainWindow::won()
             {
                 //button->setFlat (true);
                 fieldStatus[i][j] = REVEALED_CELL;
+                emit sendFieldStatus(fieldStatus);
+
                 button->setText(QString("💣"));
                 button->setStyleSheet(buttonStyleFlatBlue + buttonFontSmall + "color: rgb(0,0,0);");
                 qApp->processEvents();
@@ -720,11 +762,6 @@ void MainWindow::setButtonTooltip(int xCoordinate, int yCoordinate, float probab
     {
         button->setToolTip("");
     }
-}
-
-void MainWindow::testPrint()
-{
-    std::cout << amountOfMines << std::endl;
 }
 
 
