@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(so, SIGNAL(probe(QString)), this, SLOT(revealCell(QString)));
     connect(so, SIGNAL(markCell(int,int)), this, SLOT(markCell(int,int)));
+    connect(so, SIGNAL(refreshWindow()), this, SLOT(refreshWindow()));
     connect(this, SIGNAL(sendGameStatus(bool)), so, SLOT(setGameStatus(bool)));
     connect(this, SIGNAL(sendFieldStatus(QVector<QVector<int> >)), so, SLOT(setFieldStatus(QVector<QVector<int> >)));
 
@@ -377,7 +378,8 @@ void MainWindow::revealCell(QString coordinates)
             return;
         }
     }
-    qApp->processEvents();
+
+
 
     //calculateProbabilitiesForAll();
 }
@@ -467,9 +469,9 @@ void MainWindow::showMinesIfChecked()
 
 }
 
-void MainWindow::testPrint(QString test)
+void MainWindow::refreshWindow()
 {
- std::cout << test.toStdString() << std::endl;
+    qApp->processEvents();
 }
 
 /**

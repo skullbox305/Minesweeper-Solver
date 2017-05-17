@@ -91,7 +91,7 @@ public slots:
     void revealCell(QString); // wieso public?
     void markCell(int row, int column);
     void showMinesIfChecked();
-    void testPrint(QString);
+    void refreshWindow();
 
 signals:
     void sendGameStatus(bool finished);

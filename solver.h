@@ -24,6 +24,7 @@ public:
 signals:
     void probe(QString coordinate);
     void markCell(int row, int column);
+    void refreshWindow();
 
 public slots:
     void setGameStatus(bool finished);

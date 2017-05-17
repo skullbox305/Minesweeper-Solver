@@ -321,22 +321,25 @@ void Solver::doubleSetSinglePointSolver()
             column = qrand() % fieldWidth;
             x[0] = row;
             x[1] = column;
-            if(fieldStatus[row][column] == BLANK_CELL || (mineboard[row][column] > 0))
-            {
+//            if(fieldStatus[row][column] == BLANK_CELL)
+//            {
                 safeCells.append(x);
-            }
+                std::cout << "zufall" << std::endl;
+            //}
         }
         while(!safeCells.isEmpty())
         {
+
             QVector <int> x(QVector<int>(2));
             x[0] = safeCells[0][0];
             x[1] = safeCells[0][1];
             safeCells.remove(0);
-            std::cout << "1" << std::endl;
+
+            std::cout << x[0] << " , " << x[1] << std::endl;
 
             QString coordinate = QString::number(x[0])+","+QString::number(x[1]); //Coordinate of the button
             probe(coordinate);
-
+            refreshWindow();
 
             if(hasFinished)
             {
@@ -346,32 +349,35 @@ void Solver::doubleSetSinglePointSolver()
 
             if(allNeighborsAreFree(x[0], x[1]))
             {
+                for(int i = 0; i < unmarkedNeighbors.size(); i++)
+                {
+                    safeCells.append(unmarkedNeighbors[i]);
+                }
+                //safeCells.append(unmarkedNeighbors);
 
-                safeCells.append(unmarkedNeighbors);
-                std::cout << "2" << std::endl;
             }
             else
             {
                 questionableCells.append(x);
-                std::cout << "3" << std::endl;
+
             }
         }
         for(int q = 0; q < questionableCells.size(); q++)
         {
             if(allNeighborsAreMines(questionableCells[q][0], questionableCells[q][1]))
             {
-                std::cout << "4" << std::endl;
+
                 QVector< QVector<int> > unmarkedNeighbors = getAllUnmarkedNeighbors(questionableCells[q][0], questionableCells[q][1]);
-                std::cout << "5" << std::endl;
+
 
                 for(int y = 0; y < unmarkedNeighbors.size(); y++)
                 {
                     markCell(unmarkedNeighbors[y][0], unmarkedNeighbors[y][1]);
-                    std::cout << "8" << std::endl;
+
                 }
-                std::cout << "10" << std::endl;
+
                 questionableCells.remove(q);
-                std::cout << "9" << std::endl;
+
             }
         }
 
@@ -379,9 +385,9 @@ void Solver::doubleSetSinglePointSolver()
         {
             if(allNeighborsAreFree(questionableCells[q][0], questionableCells[q][1]))
             {
-                std::cout << "6" << std::endl;
+
                 QVector< QVector<int> > unmarkedNeighbors = getAllUnmarkedNeighbors(questionableCells[q][0], questionableCells[q][1]);
-                std::cout << "7" << std::endl;
+
                 safeCells.append(unmarkedNeighbors);
                 questionableCells.remove(q);
             }
