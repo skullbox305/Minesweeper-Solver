@@ -357,10 +357,10 @@ void MainWindow::revealCell(QString coordinates)
         }
 
         //Recrusively clear the squares if we reveal a zero
-        if ( game->getValue (xCoordinate, yCoordinate) == 0 ) {
-            cellsRevealed--;
-            clear(xCoordinate, yCoordinate, true);
-        }
+//        if ( game->getValue (xCoordinate, yCoordinate) == 0 ) {
+//            cellsRevealed--;
+//            clear(xCoordinate, yCoordinate, true);
+//        }
 
         //Set the image according to the value of the cell
         changeIcon(buttonPushed, xCoordinate, yCoordinate);
@@ -377,6 +377,7 @@ void MainWindow::revealCell(QString coordinates)
             return;
         }
     }
+    qApp->processEvents();
 
     //calculateProbabilitiesForAll();
 }
@@ -582,6 +583,7 @@ void MainWindow::lost() {
     QMessageBox messageBox;
     messageBox.setFixedSize(400,100);
     messageBox.information(0, "Fail", "You loose :(");
+    solverStart(); //button wieder rücksetzen
 }
 
 /**

@@ -32,7 +32,7 @@ public slots:
 
 private:
     QVector< QVector<int> > safeCells;
-    QVector< QVector<int> > unmarkedNeighbors;
+    QVector< QVector<int> > questionableCells;
 
     bool hasFinished;
     int fieldHeight;
@@ -41,9 +41,10 @@ private:
     QVector< QVector<int> > mineboard;
 
     void naiveSinglePointSolver();
+    void doubleSetSinglePointSolver();
     bool allNeighborsAreMines(int row, int column);
     bool allNeighborsAreFree(int row, int column);
-    void getAllUnmarkedNeighbors(int row, int column);
+    QVector< QVector<int> > getAllUnmarkedNeighbors(int row, int column);
 
 };
 

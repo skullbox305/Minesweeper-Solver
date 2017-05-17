@@ -1,6 +1,7 @@
 #include "solver.h"
 #include <unistd.h>
 #include <iostream>
+#include <QThread>
 
 Solver::Solver(QObject *parent) : QObject(parent)
 {
@@ -15,7 +16,8 @@ void Solver::startSolver(int _fieldWidth, int _fieldHeight)
 {
     fieldWidth = _fieldWidth;
     fieldHeight = _fieldHeight;
-    naiveSinglePointSolver();
+    //naiveSinglePointSolver();
+    doubleSetSinglePointSolver();
 }
 
 void Solver::setMineBoard(QVector<QVector<int> > _mineboard)
@@ -46,7 +48,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Top left
     if ( ((row - 1) != -1 && (column - 1) != -1) )
     {
-        if(fieldStatus[row - 1][column - 1] != REVEALED_CELL)
+        if(fieldStatus[row - 1][column - 1] == BLANK_CELL || fieldStatus[row - 1][column - 1] == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -55,7 +57,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Top center
     if ( (row - 1) != -1)
     {
-        if(fieldStatus[row - 1][column] != REVEALED_CELL)
+        if(fieldStatus[row - 1][column] == BLANK_CELL || fieldStatus[row - 1][column] == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -64,7 +66,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Top right
     if ( (row - 1) != -1 && (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row - 1][column + 1] != REVEALED_CELL)
+        if(fieldStatus[row - 1][column + 1] == BLANK_CELL || fieldStatus[row - 1][column + 1] == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -73,7 +75,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Left
     if ( (column - 1) != -1)
     {
-        if(fieldStatus[row][column - 1] != REVEALED_CELL)
+        if(fieldStatus[row][column - 1] == BLANK_CELL || fieldStatus[row][column - 1] == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -82,7 +84,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Right
     if ( (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row][column + 1] != REVEALED_CELL)
+        if(fieldStatus[row][column + 1] == BLANK_CELL || fieldStatus[row][column + 1] == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -91,7 +93,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Bottom left
     if ( (row + 1) != fieldHeight && (column - 1) != -1)
     {
-        if(fieldStatus[row + 1][column - 1] != REVEALED_CELL)
+        if(fieldStatus[row + 1][column - 1] == BLANK_CELL || fieldStatus[row + 1][column - 1] == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -100,7 +102,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Bottom center
     if ( (row + 1) != fieldHeight)
     {
-        if(fieldStatus[row + 1][column] != REVEALED_CELL)
+        if(fieldStatus[row + 1][column] == BLANK_CELL || fieldStatus[row + 1][column] == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -109,7 +111,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Bottom right
     if ( (row + 1) != fieldHeight && (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row + 1][column + 1] != REVEALED_CELL)
+        if(fieldStatus[row + 1][column + 1] == BLANK_CELL || fieldStatus[row + 1][column + 1] == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -123,14 +125,16 @@ bool Solver::allNeighborsAreMines(int row, int column)
     return result;
 }
 
-void Solver::getAllUnmarkedNeighbors(int row, int column)
+QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
 {
     QVector <int> temp(QVector<int>(2));
+    QVector< QVector<int> > unmarkedNeighbors;
+
 
     //Top left
-    if ( ((row - 1) != -1 && (row - 1) != -1) )
+    if ( ((row - 1) != -1 && (column - 1) != -1) )
     {
-        if((fieldStatus[row - 1][column - 1] != REVEALED_CELL) && (fieldStatus[row - 1][column - 1] != FLAGGED_CELL) )
+        if(fieldStatus[row - 1][column - 1] == BLANK_CELL )
         {
             temp[0] = row - 1;
             temp[1] = column - 1;
@@ -141,7 +145,7 @@ void Solver::getAllUnmarkedNeighbors(int row, int column)
     //Top center
     if ( (row - 1) != -1)
     {
-        if((fieldStatus[row - 1][column] != REVEALED_CELL) && (fieldStatus[row - 1][column] != FLAGGED_CELL))
+        if(fieldStatus[row - 1][column] == BLANK_CELL)
         {
             temp[0] = row - 1;
             temp[1] = column;
@@ -152,7 +156,7 @@ void Solver::getAllUnmarkedNeighbors(int row, int column)
     //Top right
     if ( (row - 1) != -1 && (column + 1) != fieldWidth)
     {
-        if((fieldStatus[row - 1][column + 1] != REVEALED_CELL) && (fieldStatus[row - 1][column + 1] != FLAGGED_CELL))
+        if(fieldStatus[row - 1][column + 1] == BLANK_CELL)
         {
             temp[0] = row - 1;
             temp[1] = column + 1;
@@ -163,7 +167,7 @@ void Solver::getAllUnmarkedNeighbors(int row, int column)
     //Left
     if ( (column - 1) != -1)
     {
-        if((fieldStatus[row ][column - 1] != REVEALED_CELL) && (fieldStatus[row][column - 1] != FLAGGED_CELL))
+        if(fieldStatus[row ][column - 1] == BLANK_CELL)
         {
             temp[0] = row;
             temp[1] = column - 1;
@@ -174,7 +178,7 @@ void Solver::getAllUnmarkedNeighbors(int row, int column)
     //Right
     if ( (column + 1) != fieldWidth)
     {
-        if((fieldStatus[row + 1][column] != REVEALED_CELL) && (fieldStatus[row + 1][column] != FLAGGED_CELL))
+        if(fieldStatus[row][column + 1] == BLANK_CELL)
         {
             temp[0] = row;
             temp[1] = column + 1;
@@ -185,7 +189,7 @@ void Solver::getAllUnmarkedNeighbors(int row, int column)
     //Bottom left
     if ( (row + 1) != fieldHeight && (column - 1) != -1)
     {
-        if((fieldStatus[row + 1][column - 1] != REVEALED_CELL) && (fieldStatus[row + 1][column - 1] != FLAGGED_CELL))
+        if(fieldStatus[row + 1][column - 1] == BLANK_CELL)
         {
             temp[0] = row + 1;
             temp[1] = column - 1;
@@ -196,7 +200,7 @@ void Solver::getAllUnmarkedNeighbors(int row, int column)
     //Bottom center
     if ( (row + 1) != fieldHeight)
     {
-        if((fieldStatus[row + 1][column] != REVEALED_CELL) && (fieldStatus[row + 1][column] != FLAGGED_CELL))
+        if(fieldStatus[row + 1][column] == BLANK_CELL)
         {
             temp[0] = row + 1;
             temp[1] = column;
@@ -207,56 +211,63 @@ void Solver::getAllUnmarkedNeighbors(int row, int column)
     //Bottom right
     if ( (row + 1) != fieldHeight && (column + 1) != fieldWidth)
     {
-        if((fieldStatus[row + 1][column + 1] != REVEALED_CELL) && (fieldStatus[row + 1][column + 1] != FLAGGED_CELL))
+        if(fieldStatus[row + 1][column + 1] == BLANK_CELL)
         {
             temp[0] = row + 1;
             temp[1] = column + 1;
             unmarkedNeighbors.append(temp);
         }
     }
+    return unmarkedNeighbors;
 }
 
 void Solver::naiveSinglePointSolver()
 {
     int row, column;
+    bool firstMove = true;
     qsrand(time(NULL));
+    safeCells.clear();
 
     while (!hasFinished)
     {
         if(safeCells.isEmpty())
         {
-            row = qrand() % fieldHeight;
-            column = qrand() % fieldWidth;
+
 
             QVector <int> temp(QVector<int>(2));
-            temp[0] = row;
-            temp[1] = column;
-            safeCells.append(temp);
+            if(firstMove)
+            {
+                temp[0] = 0;
+                temp[1] = 0;
+                safeCells.append(temp);
+                firstMove = false;
+            } else
+            {
+                row = qrand() % fieldHeight;
+                column = qrand() % fieldWidth;
+                temp[0] = row;
+                temp[1] = column;
+                if(fieldStatus[row][column] == BLANK_CELL || mineboard[row][column] > 0)
+                {
+                    safeCells.append(temp);
+                }
+            }
             std::cout << "zufall" << std::endl;
-            sleep(1);
+
         }
         for(int x = 0; x < safeCells.size(); x++)
         {
-            sleep(1);
+            //QThread::msleep(300);
             QString coordinate = QString::number(safeCells[x][0])+","+QString::number(safeCells[x][1]); //Coordinate of the button
             emit probe(coordinate);
 
+            QVector< QVector<int> > unmarkedNeighbors;
 
             if(hasFinished) {
                 return;
             }
 
-
-            //if(automatic radiobutton -> (safeCells[x] zu Qstring -> revealCell() <- flagge oder nicht. x aus S entfernen) an)
-            //            {
-
-            //            } else single step nach jedem Solve Button click
-            //            {
-
-            //            }
-            //safeCells.remove(x); in probe
-
-            getAllUnmarkedNeighbors(safeCells[x][0], safeCells[x][1]);
+            unmarkedNeighbors = getAllUnmarkedNeighbors(safeCells[x][0], safeCells[x][1]);
 
             if(allNeighborsAreFree(safeCells[x][0], safeCells[x][1]))
             {
@@ -265,6 +276,7 @@ void Solver::naiveSinglePointSolver()
                     safeCells.append(unmarkedNeighbors[y]);
                 }
 
+
             } else if(allNeighborsAreMines(safeCells[x][0], safeCells[x][1]))
             {
                 for(int y = 0; y < unmarkedNeighbors.size(); y++)
@@ -272,13 +284,107 @@ void Solver::naiveSinglePointSolver()
                     markCell(unmarkedNeighbors[y][0],unmarkedNeighbors[y][1] );
                 }
 
+
             } else
             {
                 //ignore x
-                std::cout << "test" << std::endl;
-                //hasFinished = true;
+                std::cout << "ignore x" << std::endl;
+
+
             }
             safeCells.remove(x);
+        }
+    }
+}
+
+void Solver::doubleSetSinglePointSolver()
+{
+    int row, column;
+    QVector <int> opener(QVector<int>(2));
+    qsrand(time(NULL));
+
+    safeCells.clear();
+    questionableCells.clear();
+
+
+    opener[0] = 0;
+    opener[1] = 0;
+
+    safeCells.append(opener);
+
+    while(!hasFinished)
+    {
+        if(safeCells.isEmpty())
+        {
+            QVector <int> x(QVector<int>(2));
+            row = qrand() % fieldHeight;
+            column = qrand() % fieldWidth;
+            x[0] = row;
+            x[1] = column;
+            if(fieldStatus[row][column] == BLANK_CELL || (mineboard[row][column] > 0))
+            {
+                safeCells.append(x);
+            }
+        }
+        while(!safeCells.isEmpty())
+        {
+            QVector <int> x(QVector<int>(2));
+            x[0] = safeCells[0][0];
+            x[1] = safeCells[0][1];
+            safeCells.remove(0);
+            std::cout << "1" << std::endl;
+
+            QString coordinate = QString::number(x[0])+","+QString::number(x[1]); //Coordinate of the button
+            probe(coordinate);
+
+
+            if(hasFinished)
+            {
+                return;
+            }
+            QVector< QVector<int> > unmarkedNeighbors = getAllUnmarkedNeighbors(x[0], x[1]);;
+
+            if(allNeighborsAreFree(x[0], x[1]))
+            {
+
+                safeCells.append(unmarkedNeighbors);
+                std::cout << "2" << std::endl;
+            }
+            else
+            {
+                questionableCells.append(x);
+                std::cout << "3" << std::endl;
+            }
+        }
+        for(int q = 0; q < questionableCells.size(); q++)
+        {
+            if(allNeighborsAreMines(questionableCells[q][0], questionableCells[q][1]))
+            {
+                std::cout << "4" << std::endl;
+                QVector< QVector<int> > unmarkedNeighbors = getAllUnmarkedNeighbors(questionableCells[q][0], questionableCells[q][1]);
+                std::cout << "5" << std::endl;
+
+                for(int y = 0; y < unmarkedNeighbors.size(); y++)
+                {
+                    markCell(unmarkedNeighbors[y][0], unmarkedNeighbors[y][1]);
+                    std::cout << "8" << std::endl;
+                }
+                std::cout << "10" << std::endl;
+                questionableCells.remove(q);
+                std::cout << "9" << std::endl;
+            }
+        }
+
+        for(int q = 0; q < questionableCells.size(); q++)
+        {
+            if(allNeighborsAreFree(questionableCells[q][0], questionableCells[q][1]))
+            {
+                std::cout << "6" << std::endl;
+                QVector< QVector<int> > unmarkedNeighbors = getAllUnmarkedNeighbors(questionableCells[q][0], questionableCells[q][1]);
+                std::cout << "7" << std::endl;
+                safeCells.append(unmarkedNeighbors);
+                questionableCells.remove(q);
+            }
         }
     }
 }
