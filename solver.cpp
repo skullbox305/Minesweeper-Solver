@@ -12,12 +12,44 @@ Solver::~Solver()
 {
 }
 
-void Solver::startSolver(int _fieldWidth, int _fieldHeight)
+void Solver::startSolver(int _fieldWidth, int _fieldHeight, int algorithmID)
 {
     fieldWidth = _fieldWidth;
     fieldHeight = _fieldHeight;
-    //naiveSinglePointSolver();
-    doubleSetSinglePointSolver();
+    solverRunning = true;
+
+    if(algorithmID == 1)
+    {
+      naiveSinglePointSolver();
+    }
+    else if(algorithmID == 2)
+    {
+        doubleSetSinglePointSolver();
+    }
+    else if(algorithmID == 3)
+    {
+
+    }
+}
+
+void Solver::stopSolver()
+{
+    solverRunning = false;
+}
+
+bool Solver::isSolverRunning()
+{
+    return solverRunning;
+}
+
+void Solver::bestMove()
+{
+
+}
+
+void Solver::setDelay(int msec)
+{
+    delay = msec;
 }
 
 void Solver::setMineBoard(QVector<QVector<int> > _mineboard)
@@ -232,8 +264,6 @@ void Solver::naiveSinglePointSolver()
     {
         if(safeCells.isEmpty())
         {
-
-
             QVector <int> temp(QVector<int>(2));
             if(firstMove)
             {
@@ -252,14 +282,16 @@ void Solver::naiveSinglePointSolver()
                     safeCells.append(temp);
                 }
             }
-            std::cout << "zufall" << std::endl;
-
         }
         for(int x = 0; x < safeCells.size(); x++)
         {
-            //QThread::msleep(300);
+            if(fieldStatus[safeCells[x][0]][safeCells[x][1]] == BLANK_CELL)
+            {
+                QThread::msleep(delay);
+            }
             QString coordinate = QString::number(safeCells[x][0])+","+QString::number(safeCells[x][1]); //Coordinate of the button
             emit probe(coordinate);
+            refreshWindow();
 
             QVector< QVector<int> > unmarkedNeighbors;
 
@@ -288,7 +320,7 @@ void Solver::naiveSinglePointSolver()
             } else
             {
                 //ignore x
-                std::cout << "ignore x" << std::endl;
+                //std::cout << "ignore x" << std::endl;
 
 
             }
@@ -321,23 +353,20 @@ void Solver::doubleSetSinglePointSolver()
             column = qrand() % fieldWidth;
             x[0] = row;
             x[1] = column;
-//            if(fieldStatus[row][column] == BLANK_CELL)
-//            {
-                safeCells.append(x);
-                std::cout << "zufall" << std::endl;
-            //}
+
+            safeCells.append(x);
         }
         while(!safeCells.isEmpty())
         {
 
             QVector <int> x(QVector<int>(2));
-            x[0] = safeCells[0][0];
-            x[1] = safeCells[0][1];
-            safeCells.remove(0);
 
-            std::cout << x[0] << " , " << x[1] << std::endl;
+            x[0] = safeCells.last()[0];
+            x[1] = safeCells.last()[1];
+            safeCells.removeLast();
 
             QString coordinate = QString::number(x[0])+","+QString::number(x[1]); //Coordinate of the button
+
             probe(coordinate);
             refreshWindow();
 
@@ -345,6 +374,7 @@ void Solver::doubleSetSinglePointSolver()
             {
                 return;
             }
+
             QVector< QVector<int> > unmarkedNeighbors = getAllUnmarkedNeighbors(x[0], x[1]);;
 
             if(allNeighborsAreFree(x[0], x[1]))
@@ -353,14 +383,20 @@ void Solver::doubleSetSinglePointSolver()
                 {
                     safeCells.append(unmarkedNeighbors[i]);
                 }
-                //safeCells.append(unmarkedNeighbors);
-
             }
             else
             {
                 questionableCells.append(x);
 
             }
+            if(!safeCells.isEmpty())
+            {
+                if(fieldStatus[(safeCells.last()[0])][(safeCells.last()[1])] == BLANK_CELL)
+                {
+                    QThread::msleep(delay);
+                }
+            }
+
         }
         for(int q = 0; q < questionableCells.size(); q++)
         {
@@ -373,11 +409,10 @@ void Solver::doubleSetSinglePointSolver()
                 for(int y = 0; y < unmarkedNeighbors.size(); y++)
                 {
                     markCell(unmarkedNeighbors[y][0], unmarkedNeighbors[y][1]);
-
+                    QThread::msleep(delay);
+                    refreshWindow();
                 }
-
                 questionableCells.remove(q);
-
             }
         }
 
@@ -385,7 +420,6 @@ void Solver::doubleSetSinglePointSolver()
         {
             if(allNeighborsAreFree(questionableCells[q][0], questionableCells[q][1]))
             {
-
                 QVector< QVector<int> > unmarkedNeighbors = getAllUnmarkedNeighbors(questionableCells[q][0], questionableCells[q][1]);
 
                 safeCells.append(unmarkedNeighbors);

@@ -17,19 +17,14 @@ public:
     Solver(QObject *parent);
     ~Solver();
 
-    void startSolver(int _fieldWidth, int _fieldHeight);
+    void startSolver(int _fieldWidth, int _fieldHeight, int algorithmID);
+    void stopSolver();
+    bool isSolverRunning();
+    void bestMove();
+    void setDelay(int msec);
     void setMineBoard(QVector< QVector<int> > _mineboard);
-
-
-signals:
-    void probe(QString coordinate);
-    void markCell(int row, int column);
-    void refreshWindow();
-
-public slots:
     void setGameStatus(bool finished);
     void setFieldStatus(QVector< QVector<int> > fieldStatus);
-
 
 private:
     QVector< QVector<int> > safeCells;
@@ -38,6 +33,9 @@ private:
     bool hasFinished;
     int fieldHeight;
     int fieldWidth;
+    int delay;
+    bool solverRunning;
+    bool newGame;
     QVector< QVector<int> > fieldStatus;
     QVector< QVector<int> > mineboard;
 
@@ -47,6 +45,10 @@ private:
     bool allNeighborsAreFree(int row, int column);
     QVector< QVector<int> > getAllUnmarkedNeighbors(int row, int column);
 
+signals:
+    void probe(QString coordinate);
+    void markCell(int row, int column);
+    void refreshWindow();
 };
 
 #endif // SOLVER_H

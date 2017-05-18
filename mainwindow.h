@@ -74,8 +74,6 @@ private:
     void createGameVectors(int fieldWidth, int fieldHeight);
     void changeIcon(MineSweeperButton*, int, int);
     void buttonResize();
-    void calculateProbabilitiesForAll();
-    void calculateProbabilitySinglePoint();
     void setButtonTooltip(int xCoordinate, int yCoordinate, float probability);
 
 private slots:
@@ -84,7 +82,8 @@ private slots:
     void showGamemenu();
     void showColorLegend();
     void setSolverMode();
-    void solverStart();
+    void solverControl();
+    void showSolution();
 
 public slots:
 
@@ -92,10 +91,6 @@ public slots:
     void markCell(int row, int column);
     void showMinesIfChecked();
     void refreshWindow();
-
-signals:
-    void sendGameStatus(bool finished);
-    void sendFieldStatus(QVector< QVector<int> > _fieldStatus);
 
 };
 
