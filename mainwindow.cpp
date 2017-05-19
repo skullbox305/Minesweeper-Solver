@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     buttonFontBig = "font: 14pt 'Arial';";
 
     ui->setupUi(this);
-    QMainWindow::showNormal();
+    QMainWindow::showMaximized();
 
     //Layout designs
     ui->mineContainer->setSpacing(2); //Forces the board cells to be spaced next to each other
@@ -39,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radioButton_SolverAuto, SIGNAL(clicked()), this, SLOT(setSolverMode()));
     connect(ui->radioButton_SolverManual, SIGNAL(clicked()), this, SLOT(setSolverMode()));
     connect(ui->solverStartButton, SIGNAL(clicked()), this, SLOT(solverControl()));
+    connect(ui->button_PerformanceAnalysis, SIGNAL(released()), this, SLOT(showPerformanceAnalysisWindow()));
+    connect(ui->button_Help, SIGNAL(released()), this, SLOT(showHelpWindow()));
+    connect(ui->button_About, SIGNAL(released()), this, SLOT(showAboutWindow()));
 
     connect(so, SIGNAL(probe(QString)), this, SLOT(revealCell(QString)));
     connect(so, SIGNAL(markCell(int,int)), this, SLOT(markCell(int,int)));
@@ -579,15 +582,18 @@ void MainWindow::lost() {
                 fieldStatus[i][j] = REVEALED_CELL;
                 so->setFieldStatus(fieldStatus);
 
-                //                //Are we flagged? Good job! you find a mine and flagged it :)
-                //                if ( fieldStatus[i][j] == FLAGGED_CELL ) {
-                //                    button->setText(QString("💣"));
-                //                    button->setStyleSheet("color: rgb(0,150,0);" + buttonStyleFlatGrey + buttonFontSmall);
-                //                } else {
-                //                    //BOO!! You didn't find this mine!
-                //                    button->setText(QString("💣"));
-                //                    button->setStyleSheet("color: rgb(0,0,0);" + buttonStyleFlatGrey + buttonFontSmall);
-                //                }
+                if(!so->isSolverRunning())
+                {
+                    //Are we flagged? Good job! you find a mine and flagged it :)
+                    if ( fieldStatus[i][j] == FLAGGED_CELL ) {
+                        button->setText(QString("💣"));
+                        button->setStyleSheet("color: rgb(0,150,0);" + buttonStyleFlatGrey + buttonFontSmall);
+                    } else {
+                        //BOO!! You didn't find this mine!
+                        button->setText(QString("💣"));
+                        button->setStyleSheet("color: rgb(0,0,0);" + buttonStyleFlatGrey + buttonFontSmall);
+                    }
+                }
             }
         }
         //qApp->processEvents();
@@ -749,6 +755,25 @@ void MainWindow::solverControl()
 void MainWindow::showSolution()
 {
 
+}
+
+void MainWindow::showPerformanceAnalysisWindow()
+{
+    PerformanceAnalysis *pf = new PerformanceAnalysis();
+    pf->show();
+}
+
+void MainWindow::showHelpWindow()
+{
+    HelpWindow* helpWindow = new HelpWindow();
+    helpWindow->show();
+
+}
+
+void MainWindow::showAboutWindow()
+{
+    AboutWindow* aboutWindow = new AboutWindow();
+    aboutWindow->show();
 }
 
 /**

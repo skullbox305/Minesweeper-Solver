@@ -18,6 +18,9 @@
 #include <QSignalMapper>
 #include "minesweeper.h"
 #include "minesweeperbutton.h"
+#include "performanceanalysis.h"
+#include "aboutwindow.h"
+#include "helpwindow.h"
 #include "solver.h"
 #include <QMessageBox>
 #include <QVector>
@@ -84,6 +87,9 @@ private slots:
     void setSolverMode();
     void solverControl();
     void showSolution();
+    void showPerformanceAnalysisWindow();
+    void showHelpWindow();
+    void showAboutWindow();
 
 public slots:
 

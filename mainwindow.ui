@@ -9,27 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>881</width>
-    <height>900</height>
+    <width>1103</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>881</width>
-    <height>0</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>881</width>
-    <height>900</height>
-   </size>
   </property>
   <property name="palette">
    <palette>
@@ -153,7 +141,7 @@
     <string notr="true">background-color: rgb(64, 66, 68);
 color: rgb(255, 255, 255);</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,1">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,1" columnstretch="0">
     <property name="sizeConstraint">
      <enum>QLayout::SetDefaultConstraint</enum>
     </property>
@@ -215,8 +203,8 @@ color: rgb(255, 255, 255);</string>
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>881</width>
-         <height>700</height>
+         <width>1103</width>
+         <height>575</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -285,12 +273,12 @@ color: rgb(255, 255, 255);</string>
     <item row="1" column="0">
      <widget class="QWidget" name="widget_Menu" native="true">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <layout class="QGridLayout" name="gridLayout_14" rowstretch="0,0,0,0">
+      <layout class="QGridLayout" name="gridLayout_14" rowstretch="0,0,0">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -306,10 +294,10 @@ color: rgb(255, 255, 255);</string>
        <property name="spacing">
         <number>0</number>
        </property>
-       <item row="3" column="0" alignment="Qt::AlignHCenter">
+       <item row="2" column="0" alignment="Qt::AlignHCenter">
         <widget class="QWidget" name="widget" native="true">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -322,9 +310,9 @@ border: 1px solid black;
 
 }</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_9">
+         <layout class="QGridLayout" name="gridLayout_9" rowstretch="0">
           <property name="sizeConstraint">
-           <enum>QLayout::SetFixedSize</enum>
+           <enum>QLayout::SetDefaultConstraint</enum>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -344,7 +332,7 @@ border: 1px solid black;
           <item row="0" column="0">
            <layout class="QGridLayout" name="GameMenu" rowstretch="0" columnstretch="0,0">
             <property name="sizeConstraint">
-             <enum>QLayout::SetFixedSize</enum>
+             <enum>QLayout::SetDefaultConstraint</enum>
             </property>
             <property name="leftMargin">
              <number>0</number>
@@ -366,17 +354,11 @@ border: 1px solid black;
             </property>
             <item row="0" column="1">
              <widget class="QGroupBox" name="groupBox_SolverOptions">
-              <property name="minimumSize">
-               <size>
-                <width>548</width>
-                <height>147</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>500</width>
-                <height>147</height>
-               </size>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="font">
                <font>
@@ -410,6 +392,9 @@ background-color: rgb(213, 213, 214);
                <property name="sizeConstraint">
                 <enum>QLayout::SetDefaultConstraint</enum>
                </property>
+               <property name="leftMargin">
+                <number>9</number>
+               </property>
                <property name="topMargin">
                 <number>9</number>
                </property>
@@ -417,23 +402,26 @@ background-color: rgb(213, 213, 214);
                 <number>9</number>
                </property>
                <property name="bottomMargin">
-                <number>5</number>
+                <number>6</number>
+               </property>
+               <property name="spacing">
+                <number>6</number>
                </property>
                <item row="0" column="0">
-                <layout class="QGridLayout" name="gridLayout_10" rowstretch="0,0">
-                 <property name="bottomMargin">
-                  <number>7</number>
-                 </property>
+                <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0">
                  <property name="spacing">
+                  <number>9</number>
+                 </property>
+                 <property name="bottomMargin">
                   <number>0</number>
                  </property>
-                 <item row="0" column="0">
-                  <layout class="QHBoxLayout" name="horizontalLayout_SolverOptions" stretch="1,0,0,0,0,0">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_SolverOptions">
                    <property name="spacing">
-                    <number>3</number>
+                    <number>4</number>
                    </property>
                    <property name="sizeConstraint">
-                    <enum>QLayout::SetFixedSize</enum>
+                    <enum>QLayout::SetDefaultConstraint</enum>
                    </property>
                    <property name="leftMargin">
                     <number>0</number>
@@ -442,24 +430,45 @@ background-color: rgb(213, 213, 214);
                     <number>0</number>
                    </property>
                    <property name="bottomMargin">
-                    <number>7</number>
+                    <number>0</number>
                    </property>
                    <item>
-                    <layout class="QGridLayout" name="gridLayout_SolverSettings" rowstretch="0,0,0,0" columnstretch="0">
-                     <property name="topMargin">
-                      <number>5</number>
-                     </property>
+                    <layout class="QGridLayout" name="gridLayout_SolverSettings" rowstretch="0,0,0" columnstretch="0">
                      <property name="bottomMargin">
                       <number>0</number>
                      </property>
-                     <property name="horizontalSpacing">
-                      <number>0</number>
+                     <property name="spacing">
+                      <number>7</number>
                      </property>
-                     <property name="verticalSpacing">
-                      <number>5</number>
-                     </property>
+                     <item row="2" column="0">
+                      <widget class="QRadioButton" name="radioButton_SolverManual">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="font">
+                        <font>
+                         <pointsize>12</pointsize>
+                        </font>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">color: black;background-color: rgb(213, 213, 214);</string>
+                       </property>
+                       <property name="text">
+                        <string>Click-By-Click</string>
+                       </property>
+                      </widget>
+                     </item>
                      <item row="0" column="0">
                       <widget class="QRadioButton" name="radioButton_SolverAuto">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <pointsize>12</pointsize>
@@ -476,28 +485,13 @@ background-color: rgb(213, 213, 214);
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="0">
-                      <widget class="QRadioButton" name="radioButton_SolverManual">
-                       <property name="font">
-                        <font>
-                         <pointsize>12</pointsize>
-                        </font>
-                       </property>
-                       <property name="styleSheet">
-                        <string notr="true">color: black;background-color: rgb(213, 213, 214);</string>
-                       </property>
-                       <property name="text">
-                        <string>Click-By-Click</string>
-                       </property>
-                      </widget>
-                     </item>
                      <item row="1" column="0">
                       <layout class="QGridLayout" name="gridLayout_7" columnstretch="0,0,0">
                        <item row="0" column="1">
                         <widget class="QSpinBox" name="spinBox_SolverDelaySeconds">
                          <property name="font">
                           <font>
-                           <pointsize>10</pointsize>
+                           <pointsize>12</pointsize>
                           </font>
                          </property>
                          <property name="styleSheet">
@@ -520,6 +514,12 @@ border: 1px solid black;
                        </item>
                        <item row="0" column="0">
                         <widget class="QLabel" name="labelDelayPerStep">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="font">
                           <font>
                            <pointsize>12</pointsize>
@@ -550,23 +550,22 @@ border: 1px solid black;
                        </item>
                       </layout>
                      </item>
-                     <item row="3" column="0">
-                      <spacer name="horizontalSpacer_4">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>140</width>
-                         <height>1</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
                     </layout>
                    </item>
                    <item>
                     <widget class="Line" name="line_3">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>2</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
                      </property>
@@ -574,8 +573,20 @@ border: 1px solid black;
                    </item>
                    <item>
                     <layout class="QGridLayout" name="gridLayout_2">
+                     <property name="horizontalSpacing">
+                      <number>7</number>
+                     </property>
+                     <property name="verticalSpacing">
+                      <number>0</number>
+                     </property>
                      <item row="1" column="0">
                       <widget class="QRadioButton" name="radioButton_naiveSinglePoint">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
@@ -594,6 +605,12 @@ border: 1px solid black;
                      </item>
                      <item row="3" column="0">
                       <widget class="QRadioButton" name="radioButton_linear">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
@@ -612,6 +629,12 @@ border: 1px solid black;
                      </item>
                      <item row="2" column="0">
                       <widget class="QRadioButton" name="radioButton_doubleSetSinglePoint">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
@@ -633,6 +656,12 @@ border: 1px solid black;
                      </item>
                      <item row="0" column="0">
                       <widget class="QLabel" name="label">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <pointsize>12</pointsize>
@@ -663,17 +692,32 @@ border: 1px solid black;
                    </item>
                    <item>
                     <widget class="Line" name="line">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>2</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <layout class="QGridLayout" name="gridLayout_ShowSolution" rowstretch="1,0,1,0,0,0" columnstretch="0">
+                    <layout class="QGridLayout" name="gridLayout_ShowSolution" rowstretch="0,0,0,0,0,0" columnstretch="0">
                      <property name="leftMargin">
                       <number>0</number>
                      </property>
-                     <property name="spacing">
+                     <property name="horizontalSpacing">
+                      <number>7</number>
+                     </property>
+                     <property name="verticalSpacing">
                       <number>0</number>
                      </property>
                      <item row="1" column="0">
@@ -684,22 +728,10 @@ border: 1px solid black;
                        <item>
                         <widget class="QCheckBox" name="cbShowSolution">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
-                         </property>
-                         <property name="minimumSize">
-                          <size>
-                           <width>150</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>130</width>
-                           <height>20</height>
-                          </size>
                          </property>
                          <property name="font">
                           <font>
@@ -721,7 +753,7 @@ border: 1px solid black;
                          </property>
                          <property name="sizeHint" stdset="0">
                           <size>
-                           <width>50</width>
+                           <width>0</width>
                            <height>0</height>
                           </size>
                          </property>
@@ -729,38 +761,13 @@ border: 1px solid black;
                        </item>
                       </layout>
                      </item>
-                     <item row="2" column="0">
-                      <spacer name="verticalSpacer">
-                       <property name="orientation">
-                        <enum>Qt::Vertical</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>20</width>
-                         <height>40</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
                      <item row="5" column="0">
                       <widget class="QWidget" name="widgetColorLegend" native="true">
                        <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
                          <verstretch>0</verstretch>
                         </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>200</width>
-                         <height>60</height>
-                        </size>
-                       </property>
-                       <property name="maximumSize">
-                        <size>
-                         <width>200</width>
-                         <height>60</height>
-                        </size>
                        </property>
                        <property name="font">
                         <font>
@@ -804,23 +811,23 @@ border: 1px solid black;
                             <property name="sizeHint" stdset="0">
                              <size>
                               <width>20</width>
-                              <height>40</height>
+                              <height>1</height>
                              </size>
                             </property>
                            </spacer>
                           </item>
                           <item row="1" column="0">
                            <widget class="QFrame" name="frame_Solver_Safe">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
                             <property name="minimumSize">
                              <size>
-                              <width>50</width>
-                              <height>60</height>
-                             </size>
-                            </property>
-                            <property name="maximumSize">
-                             <size>
-                              <width>50</width>
-                              <height>60</height>
+                              <width>70</width>
+                              <height>70</height>
                              </size>
                             </property>
                             <property name="styleSheet">
@@ -838,13 +845,22 @@ border-bottom-left-radius: 5px;
                              <enum>QFrame::Plain</enum>
                             </property>
                             <widget class="QLabel" name="label_Safe">
+                             <property name="enabled">
+                              <bool>true</bool>
+                             </property>
                              <property name="geometry">
                               <rect>
-                               <x>9</x>
-                               <y>21</y>
-                               <width>34</width>
-                               <height>21</height>
+                               <x>10</x>
+                               <y>10</y>
+                               <width>51</width>
+                               <height>51</height>
                               </rect>
+                             </property>
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
                              </property>
                              <property name="font">
                               <font>
@@ -862,6 +878,9 @@ border: 0px ;</string>
                              <property name="text">
                               <string>Safe</string>
                              </property>
+                             <property name="alignment">
+                              <set>Qt::AlignCenter</set>
+                             </property>
                             </widget>
                            </widget>
                           </item>
@@ -875,16 +894,16 @@ border: 0px ;</string>
                             </property>
                             <item>
                              <widget class="QFrame" name="frame_Solver_Uncertain">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
                               <property name="minimumSize">
                                <size>
-                                <width>60</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="maximumSize">
-                               <size>
-                                <width>100</width>
-                                <height>30</height>
+                                <width>150</width>
+                                <height>0</height>
                                </size>
                               </property>
                               <property name="styleSheet">
@@ -906,11 +925,17 @@ border-right: 0px;
                               <widget class="QLabel" name="label_Uncertain">
                                <property name="geometry">
                                 <rect>
-                                 <x>16</x>
-                                 <y>7</y>
-                                 <width>71</width>
-                                 <height>16</height>
+                                 <x>0</x>
+                                 <y>3</y>
+                                 <width>147</width>
+                                 <height>28</height>
                                 </rect>
+                               </property>
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
                                </property>
                                <property name="font">
                                 <font>
@@ -927,21 +952,24 @@ border: 0px;
                                <property name="text">
                                 <string>Uncertain</string>
                                </property>
+                               <property name="alignment">
+                                <set>Qt::AlignCenter</set>
+                               </property>
                               </widget>
                              </widget>
                             </item>
                             <item>
                              <widget class="QFrame" name="frame_SolverBestGuess">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
                               <property name="minimumSize">
                                <size>
-                                <width>60</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="maximumSize">
-                               <size>
-                                <width>100</width>
-                                <height>35</height>
+                                <width>150</width>
+                                <height>0</height>
                                </size>
                               </property>
                               <property name="font">
@@ -967,11 +995,17 @@ border-right: 0px;
                               <widget class="QLabel" name="label_BestGuess">
                                <property name="geometry">
                                 <rect>
-                                 <x>10</x>
-                                 <y>7</y>
-                                 <width>81</width>
-                                 <height>16</height>
+                                 <x>0</x>
+                                 <y>3</y>
+                                 <width>147</width>
+                                 <height>28</height>
                                 </rect>
+                               </property>
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
                                </property>
                                <property name="font">
                                 <font>
@@ -989,6 +1023,9 @@ border: 0px;
                                <property name="text">
                                 <string>Best Guess</string>
                                </property>
+                               <property name="alignment">
+                                <set>Qt::AlignCenter</set>
+                               </property>
                               </widget>
                              </widget>
                             </item>
@@ -997,21 +1034,15 @@ border: 0px;
                           <item row="1" column="3">
                            <widget class="QFrame" name="frame_Solver_Mine">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
                             </property>
                             <property name="minimumSize">
                              <size>
-                              <width>50</width>
-                              <height>60</height>
-                             </size>
-                            </property>
-                            <property name="maximumSize">
-                             <size>
-                              <width>50</width>
-                              <height>60</height>
+                              <width>70</width>
+                              <height>70</height>
                              </size>
                             </property>
                             <property name="styleSheet">
@@ -1030,10 +1061,10 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
                             <widget class="QLabel" name="label_Mine">
                              <property name="geometry">
                               <rect>
-                               <x>9</x>
-                               <y>23</y>
-                               <width>38</width>
-                               <height>16</height>
+                               <x>10</x>
+                               <y>10</y>
+                               <width>51</width>
+                               <height>51</height>
                               </rect>
                              </property>
                              <property name="font">
@@ -1049,6 +1080,9 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
                              </property>
                              <property name="text">
                               <string>Mine</string>
+                             </property>
+                             <property name="alignment">
+                              <set>Qt::AlignCenter</set>
                              </property>
                             </widget>
                            </widget>
@@ -1066,7 +1100,20 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
                        <property name="sizeHint" stdset="0">
                         <size>
                          <width>20</width>
-                         <height>20</height>
+                         <height>1</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item row="2" column="0">
+                      <spacer name="verticalSpacer">
+                       <property name="orientation">
+                        <enum>Qt::Vertical</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>20</width>
+                         <height>1</height>
                         </size>
                        </property>
                       </spacer>
@@ -1075,24 +1122,24 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
                    </item>
                   </layout>
                  </item>
-                 <item row="1" column="0">
+                 <item>
                   <widget class="QToolButton" name="solverStartButton">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>260</width>
-                     <height>25</height>
+                     <width>0</width>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>1000</width>
-                     <height>25</height>
+                     <width>16777215</width>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="font">
@@ -1115,17 +1162,11 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
             </item>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupBox_GameOptions">
-              <property name="minimumSize">
-               <size>
-                <width>270</width>
-                <height>147</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>270</width>
-                <height>147</height>
-               </size>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="font">
                <font>
@@ -1140,7 +1181,7 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
  background-color: rgb(213, 213, 214);
  color: rgb(0,0,0);
  border-radius: 5px;
- 
+
 }
 
 QCheckBox {
@@ -1172,6 +1213,9 @@ color: rgb(0,0,0);
                <property name="topMargin">
                 <number>9</number>
                </property>
+               <property name="rightMargin">
+                <number>9</number>
+               </property>
                <property name="bottomMargin">
                 <number>6</number>
                </property>
@@ -1180,6 +1224,9 @@ color: rgb(0,0,0);
                </property>
                <item row="0" column="0">
                 <layout class="QVBoxLayout" name="verticalLayout">
+                 <property name="spacing">
+                  <number>9</number>
+                 </property>
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_2">
                    <property name="spacing">
@@ -1191,10 +1238,16 @@ color: rgb(0,0,0);
                    <item>
                     <layout class="QGridLayout" name="gridLayout_3">
                      <property name="sizeConstraint">
-                      <enum>QLayout::SetFixedSize</enum>
+                      <enum>QLayout::SetDefaultConstraint</enum>
                      </property>
                      <item row="1" column="0">
                       <widget class="QLabel" name="fieldHeightLabel">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <family>MS Shell Dlg 2</family>
@@ -1213,9 +1266,14 @@ color: rgb(0,0,0);
                      </item>
                      <item row="0" column="1">
                       <widget class="QSpinBox" name="fieldWidth">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
-                         <family>Arial</family>
                          <pointsize>12</pointsize>
                          <weight>50</weight>
                          <bold>false</bold>
@@ -1257,6 +1315,12 @@ color: rgb(0,0,0);
                      </item>
                      <item row="0" column="0">
                       <widget class="QLabel" name="fieldWidthLabel">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <family>MS Shell Dlg 2</family>
@@ -1276,12 +1340,15 @@ color: rgb(0,0,0);
                      </item>
                      <item row="1" column="1">
                       <widget class="QSpinBox" name="fieldHeigth">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
-                         <family>Arial</family>
                          <pointsize>12</pointsize>
-                         <weight>50</weight>
-                         <bold>false</bold>
                         </font>
                        </property>
                        <property name="toolTip">
@@ -1306,6 +1373,12 @@ color: rgb(0,0,0);
                      </item>
                      <item row="2" column="0">
                       <widget class="QLabel" name="mineAmountLabel">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <pointsize>12</pointsize>
@@ -1321,12 +1394,15 @@ color: rgb(0,0,0);
                      </item>
                      <item row="2" column="1">
                       <widget class="QSpinBox" name="mineAmount">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
-                         <family>Arial</family>
                          <pointsize>12</pointsize>
-                         <weight>50</weight>
-                         <bold>false</bold>
                         </font>
                        </property>
                        <property name="toolTip">
@@ -1358,12 +1434,15 @@ color: rgb(0,0,0);
                      </property>
                      <item row="2" column="1">
                       <widget class="QCheckBox" name="firstClickSafe">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
-                         <family>Arial</family>
                          <pointsize>12</pointsize>
-                         <weight>50</weight>
-                         <bold>false</bold>
                         </font>
                        </property>
                        <property name="styleSheet">
@@ -1384,9 +1463,14 @@ color: rgb(0,0,0);
                       <layout class="QHBoxLayout" name="horizontalLayout_3">
                        <item>
                         <widget class="QLabel" name="label_3">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="font">
                           <font>
-                           <family>Arial</family>
                            <pointsize>12</pointsize>
                           </font>
                          </property>
@@ -1403,19 +1487,15 @@ color: rgb(0,0,0);
                          <property name="enabled">
                           <bool>true</bool>
                          </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>80</width>
-                           <height>30</height>
-                          </size>
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
                          </property>
                          <property name="font">
                           <font>
-                           <family>Arial</family>
                            <pointsize>12</pointsize>
-                           <weight>75</weight>
-                           <bold>true</bold>
-                           <kerning>true</kerning>
                           </font>
                          </property>
                          <property name="layoutDirection">
@@ -1466,6 +1546,12 @@ border-radius: 5px;
                      </item>
                      <item row="1" column="1">
                       <widget class="QCheckBox" name="showMines">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="font">
                         <font>
                          <pointsize>12</pointsize>
@@ -1495,14 +1581,14 @@ border-radius: 5px;
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>250</width>
-                     <height>25</height>
+                     <width>0</width>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>270</width>
-                     <height>25</height>
+                     <width>16777215</width>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="font">
@@ -1540,7 +1626,7 @@ border-radius: 5px;
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="0" column="0">
         <layout class="QGridLayout" name="gridLayout_13" columnstretch="0,0,0,0,0,0,0,0,0">
          <property name="sizeConstraint">
           <enum>QLayout::SetDefaultConstraint</enum>
@@ -1551,13 +1637,6 @@ border-radius: 5px;
          <property name="spacing">
           <number>0</number>
          </property>
-         <item row="0" column="1">
-          <widget class="Line" name="line_4">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="3">
           <widget class="Line" name="line_5">
            <property name="orientation">
@@ -1566,35 +1645,34 @@ border-radius: 5px;
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="QToolButton" name="toolButton">
+          <widget class="QToolButton" name="button_PerformanceAnalysis">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>35</height>
+            </size>
+           </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>11</pointsize>
             </font>
            </property>
            <property name="styleSheet">
             <string notr="true">border-style: solid; border-color: black; </string>
            </property>
            <property name="text">
-            <string>Performance Analysis</string>
+            <string>Performance Test</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="6">
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="7">
-          <widget class="Line" name="line_6">
+         <item row="0" column="1">
+          <widget class="Line" name="line_4">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -1603,26 +1681,14 @@ border-radius: 5px;
          <item row="0" column="8">
           <widget class="QToolButton" name="button_GameOptions">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>25</height>
-            </size>
-           </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>11</pointsize>
              <weight>50</weight>
              <bold>false</bold>
             </font>
@@ -1635,33 +1701,23 @@ border-radius: 5px;
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QToolButton" name="toolButton_2">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
+         <item row="0" column="6">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-           <property name="styleSheet">
-            <string notr="true">border-style: solid; border-color: black; </string>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>1900</width>
+             <height>20</height>
+            </size>
            </property>
-           <property name="text">
-            <string>Help</string>
-           </property>
-          </widget>
+          </spacer>
          </item>
-         <item row="0" column="4">
-          <widget class="QToolButton" name="toolButton_3">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border-style: solid; border-color: black; </string>
-           </property>
-           <property name="text">
-            <string>About</string>
+         <item row="0" column="7">
+          <widget class="Line" name="line_6">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
@@ -1672,28 +1728,63 @@ border-radius: 5px;
            </property>
           </widget>
          </item>
+         <item row="0" column="4">
+          <widget class="QToolButton" name="button_About">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border-style: solid; border-color: black; </string>
+           </property>
+           <property name="text">
+            <string>About</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QToolButton" name="button_Help">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border-style: solid; border-color: black; </string>
+           </property>
+           <property name="text">
+            <string>Help</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
-       <item row="2" column="0">
+       <item row="1" column="0">
         <widget class="Line" name="line_2">
-         <property name="minimumSize">
-          <size>
-           <width>881</width>
-           <height>0</height>
-          </size>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
          <property name="font">
           <font>
            <pointsize>17</pointsize>
           </font>
          </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="Line" name="line_7">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>

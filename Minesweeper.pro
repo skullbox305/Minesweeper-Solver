@@ -9,11 +9,20 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     minesweeper.cpp \
     minesweeperbutton.cpp \
-    solver.cpp
+    solver.cpp \
+    performanceanalysis.cpp \
+    helpwindow.cpp \
+    aboutwindow.cpp
 HEADERS += mainwindow.h \
     minesweeper.h \
     minesweeperbutton.h \
-    solver.h
-FORMS += mainwindow.ui
+    solver.h \
+    performanceanalysis.h \
+    helpwindow.h \
+    aboutwindow.h
+FORMS += mainwindow.ui \
+    performanceanalysis.ui \
+    helpwindow.ui \
+    aboutwindow.ui
 RESOURCES += \
     images.qrc

@@ -80,6 +80,8 @@ void Minesweeper::generateBoard(bool firstClickSafe, int xFirstClick, int yFirst
         if ( (xCoordinate+1) != fieldHeight && (yCoordinate+1) != fieldWidth && mineBoard[xCoordinate+1][yCoordinate+1] != MINE)
             mineBoard[xCoordinate+1][yCoordinate+1]++;
     }
+
+
 }
 
 
