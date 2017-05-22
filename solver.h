@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QVector>
 #include "time.h"
+#include "minesweeper.h"
 
 class Solver : public QObject
 {
@@ -16,9 +17,11 @@ class Solver : public QObject
 public:
     Solver(QObject *parent);
     ~Solver();
+    Minesweeper* game;
 
-    void startSolver(int _fieldWidth, int _fieldHeight, int algorithmID);
+    void startSolver(int algorithmID);
     void stopSolver();
+    void resetSolver();
     bool isSolverRunning();
     void bestMove();
     void setDelay(int msec);

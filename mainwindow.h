@@ -16,7 +16,6 @@
 #include <iostream>
 #include <QMainWindow>
 #include <QSignalMapper>
-#include "minesweeper.h"
 #include "minesweeperbutton.h"
 #include "performanceanalysis.h"
 #include "aboutwindow.h"
@@ -24,7 +23,7 @@
 #include "solver.h"
 #include <QMessageBox>
 #include <QVector>
-
+#include <time.h>
 
 namespace Ui {
     class MainWindow;
@@ -41,7 +40,6 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    Minesweeper *game;
     Solver *so;
 
     QSignalMapper *signalMapperLeftClick;
@@ -54,10 +52,9 @@ private:
     QString buttonFontSmall;
     QString buttonFontBig;
 
-    int currentTime;
-    bool hasStarted;
-    bool hasFinished;
-    int cellsRevealed;
+//    bool hasStarted;
+//    bool hasFinished;
+//    int cellsRevealed;
     int minesFlagged;
     int flagsFlagged;
 
@@ -65,23 +62,30 @@ private:
     int fieldWidth;
     int amountOfMines;
 
-    QVector< QVector<int> > fieldStatus; //BLANK_CELL, FLAGGED_CELL, QUESTION_CELL or REVEALED_CELL
-    QVector< QVector<int> > mineBoard; //Zahl zwischen 0-9. 0-8 ist klar, 9 Mine
-    QVector< QVector<float> > probabilities; //wahrscheinlichkeiten für eine Mine
-    QVector< QVector<int> > amountOfNeighbour; // Anzahl der nicht aufgedeckten Nachbarn eines aufgedeckten Feldes mit einer Zahl zwischen 1-8
+//    QVector< QVector<int> > fieldStatus; //BLANK_CELL, FLAGGED_CELL, QUESTION_CELL or REVEALED_CELL
+//    QVector< QVector<int> > mineBoard; //Zahl zwischen 0-9. 0-8 ist klar, 9 Mine
+
+//    QVector< QVector<float> > probabilities; //wahrscheinlichkeiten für eine Mine
+//    QVector< QVector<int> > amountOfNeighbour; // Anzahl der nicht aufgedeckten Nachbarn eines aufgedeckten Feldes mit einer Zahl zwischen 1-8
 
     void initMainWindow(bool reinitialize);
+
     void lost();
     void won();
-    void clear(int, int, bool);
-    void createGameVectors(int fieldWidth, int fieldHeight);
+    //void clear(int, int, bool);
+
+    void clear(int, int, bool, bool firstClearRequest);
+
+    //void createGameVectors(int fieldWidth, int fieldHeight);
+
     void changeIcon(MineSweeperButton*, int, int);
     void buttonResize();
-    void setButtonTooltip(int xCoordinate, int yCoordinate, float probability);
+    void setButtonTooltip(int row, int column, float probability);
 
 private slots:
     void hasRightClicked(QString);
     void reset();
+
     void showGamemenu();
     void showColorLegend();
     void setSolverMode();
@@ -93,8 +97,10 @@ private slots:
 
 public slots:
 
-    void revealCell(QString); // wieso public?
+    //void revealCell(QString); // wieso public?
+    void hasLeftClicked(QString coordinates);
     void markCell(int row, int column);
+
     void showMinesIfChecked();
     void refreshWindow();
 

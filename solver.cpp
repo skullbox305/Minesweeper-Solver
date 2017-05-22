@@ -12,10 +12,10 @@ Solver::~Solver()
 {
 }
 
-void Solver::startSolver(int _fieldWidth, int _fieldHeight, int algorithmID)
+void Solver::startSolver(int algorithmID)
 {
-    fieldWidth = _fieldWidth;
-    fieldHeight = _fieldHeight;
+    fieldWidth = game->getFieldWidth();
+    fieldHeight = game->getFieldHeight();
     solverRunning = true;
 
     if(algorithmID == 1)
@@ -35,6 +35,12 @@ void Solver::startSolver(int _fieldWidth, int _fieldHeight, int algorithmID)
 void Solver::stopSolver()
 {
     solverRunning = false;
+
+}
+
+void Solver::resetSolver()
+{
+    newGame = true;
 }
 
 bool Solver::isSolverRunning()
@@ -80,7 +86,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Top left
     if ( ((row - 1) != -1 && (column - 1) != -1) )
     {
-        if(fieldStatus[row - 1][column - 1] == BLANK_CELL || fieldStatus[row - 1][column - 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row - 1,column - 1) == BLANK_CELL || game->getFieldStatus(row - 1, column - 1) == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -89,7 +95,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Top center
     if ( (row - 1) != -1)
     {
-        if(fieldStatus[row - 1][column] == BLANK_CELL || fieldStatus[row - 1][column] == FLAGGED_CELL)
+        if(game->getFieldStatus(row - 1,column) == BLANK_CELL || game->getFieldStatus(row - 1,column) == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -98,7 +104,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Top right
     if ( (row - 1) != -1 && (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row - 1][column + 1] == BLANK_CELL || fieldStatus[row - 1][column + 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row - 1,column + 1) == BLANK_CELL || game->getFieldStatus(row - 1,column + 1) == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -107,7 +113,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Left
     if ( (column - 1) != -1)
     {
-        if(fieldStatus[row][column - 1] == BLANK_CELL || fieldStatus[row][column - 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row,column - 1) == BLANK_CELL || game->getFieldStatus(row,column - 1) == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -116,7 +122,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Right
     if ( (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row][column + 1] == BLANK_CELL || fieldStatus[row][column + 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row,column + 1) == BLANK_CELL || game->getFieldStatus(row,column + 1) == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -125,7 +131,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Bottom left
     if ( (row + 1) != fieldHeight && (column - 1) != -1)
     {
-        if(fieldStatus[row + 1][column - 1] == BLANK_CELL || fieldStatus[row + 1][column - 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row + 1,column - 1) == BLANK_CELL || game->getFieldStatus(row + 1,column - 1) == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -134,7 +140,7 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Bottom center
     if ( (row + 1) != fieldHeight)
     {
-        if(fieldStatus[row + 1][column] == BLANK_CELL || fieldStatus[row + 1][column] == FLAGGED_CELL)
+        if(game->getFieldStatus(row + 1,column) == BLANK_CELL || game->getFieldStatus(row + 1,column) == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
@@ -143,13 +149,13 @@ bool Solver::allNeighborsAreMines(int row, int column)
     //Bottom right
     if ( (row + 1) != fieldHeight && (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row + 1][column + 1] == BLANK_CELL || fieldStatus[row + 1][column + 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row + 1,column + 1) == BLANK_CELL || game->getFieldStatus(row + 1,column + 1) == FLAGGED_CELL)
         {
             amountOfNeighborMines += 1;
         }
     }
 
-    if(/*game->getValue(row, column)*/ mineboard[row][column] == amountOfNeighborMines)
+    if(/*game->getValue(row, column)*/ game->getFieldValue(row,column) == amountOfNeighborMines)
     {
         result = true;
     }
@@ -166,7 +172,7 @@ QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
     //Top left
     if ( ((row - 1) != -1 && (column - 1) != -1) )
     {
-        if(fieldStatus[row - 1][column - 1] == BLANK_CELL )
+        if(game->getFieldStatus(row - 1,column - 1) == BLANK_CELL )
         {
             temp[0] = row - 1;
             temp[1] = column - 1;
@@ -177,7 +183,7 @@ QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
     //Top center
     if ( (row - 1) != -1)
     {
-        if(fieldStatus[row - 1][column] == BLANK_CELL)
+        if(game->getFieldStatus(row - 1,column) == BLANK_CELL)
         {
             temp[0] = row - 1;
             temp[1] = column;
@@ -188,7 +194,7 @@ QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
     //Top right
     if ( (row - 1) != -1 && (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row - 1][column + 1] == BLANK_CELL)
+        if(game->getFieldStatus(row - 1,column + 1) == BLANK_CELL)
         {
             temp[0] = row - 1;
             temp[1] = column + 1;
@@ -199,7 +205,7 @@ QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
     //Left
     if ( (column - 1) != -1)
     {
-        if(fieldStatus[row ][column - 1] == BLANK_CELL)
+        if(game->getFieldStatus(row, column - 1) == BLANK_CELL)
         {
             temp[0] = row;
             temp[1] = column - 1;
@@ -210,7 +216,7 @@ QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
     //Right
     if ( (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row][column + 1] == BLANK_CELL)
+        if(game->getFieldStatus(row, column + 1) == BLANK_CELL)
         {
             temp[0] = row;
             temp[1] = column + 1;
@@ -221,7 +227,7 @@ QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
     //Bottom left
     if ( (row + 1) != fieldHeight && (column - 1) != -1)
     {
-        if(fieldStatus[row + 1][column - 1] == BLANK_CELL)
+        if(game->getFieldStatus(row + 1, column - 1) == BLANK_CELL)
         {
             temp[0] = row + 1;
             temp[1] = column - 1;
@@ -232,7 +238,7 @@ QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
     //Bottom center
     if ( (row + 1) != fieldHeight)
     {
-        if(fieldStatus[row + 1][column] == BLANK_CELL)
+        if(game->getFieldStatus(row + 1, column) == BLANK_CELL)
         {
             temp[0] = row + 1;
             temp[1] = column;
@@ -243,7 +249,7 @@ QVector< QVector<int> > Solver::getAllUnmarkedNeighbors(int row, int column)
     //Bottom right
     if ( (row + 1) != fieldHeight && (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row + 1][column + 1] == BLANK_CELL)
+        if(game->getFieldStatus(row + 1, column + 1) == BLANK_CELL)
         {
             temp[0] = row + 1;
             temp[1] = column + 1;
@@ -258,9 +264,15 @@ void Solver::naiveSinglePointSolver()
     int row, column;
     bool firstMove = true;
     qsrand(time(NULL));
-    safeCells.clear();
 
-    while (!hasFinished)
+    if(newGame)
+    {
+        safeCells.clear();
+        questionableCells.clear();
+        newGame = false;
+    }
+
+    while (!game->gameHasFinished() && solverRunning)
     {
         if(safeCells.isEmpty())
         {
@@ -277,7 +289,7 @@ void Solver::naiveSinglePointSolver()
                 column = qrand() % fieldWidth;
                 temp[0] = row;
                 temp[1] = column;
-                if(fieldStatus[row][column] == BLANK_CELL || mineboard[row][column] > 0)
+                if(game->getFieldStatus(row, column) == BLANK_CELL || game->getFieldValue(row, column) > 0)
                 {
                     safeCells.append(temp);
                 }
@@ -285,19 +297,26 @@ void Solver::naiveSinglePointSolver()
         }
         for(int x = 0; x < safeCells.size(); x++)
         {
-            if(fieldStatus[safeCells[x][0]][safeCells[x][1]] == BLANK_CELL)
+            if(!solverRunning)
+            {
+                return;
+            }
+            if(game->getFieldStatus(safeCells[x][0],safeCells[x][1]) == BLANK_CELL)
             {
                 QThread::msleep(delay);
             }
             QString coordinate = QString::number(safeCells[x][0])+","+QString::number(safeCells[x][1]); //Coordinate of the button
             emit probe(coordinate);
+            //game->revealCell(safeCells[x][0], safeCells[x][1]);
             refreshWindow();
+
+            if(game->gameHasFinished()) {
+                return;
+            }
 
             QVector< QVector<int> > unmarkedNeighbors;
 
-            if(hasFinished) {
-                return;
-            }
+
 
             unmarkedNeighbors = getAllUnmarkedNeighbors(safeCells[x][0], safeCells[x][1]);
 
@@ -335,16 +354,19 @@ void Solver::doubleSetSinglePointSolver()
     QVector <int> opener(QVector<int>(2));
     qsrand(time(NULL));
 
-    safeCells.clear();
-    questionableCells.clear();
-
+    if(newGame)
+    {
+        safeCells.clear();
+        questionableCells.clear();
+        newGame = false;
+    }
 
     opener[0] = 0;
     opener[1] = 0;
 
     safeCells.append(opener);
 
-    while(!hasFinished)
+    while(!game->gameHasFinished() && solverRunning)
     {
         if(safeCells.isEmpty())
         {
@@ -356,7 +378,7 @@ void Solver::doubleSetSinglePointSolver()
 
             safeCells.append(x);
         }
-        while(!safeCells.isEmpty())
+        while(!safeCells.isEmpty() && solverRunning)
         {
 
             QVector <int> x(QVector<int>(2));
@@ -367,10 +389,11 @@ void Solver::doubleSetSinglePointSolver()
 
             QString coordinate = QString::number(x[0])+","+QString::number(x[1]); //Coordinate of the button
 
-            probe(coordinate);
+            emit probe(coordinate);
+            //game->revealCell(x[0],x[1]);
             refreshWindow();
 
-            if(hasFinished)
+            if(game->gameHasFinished())
             {
                 return;
             }
@@ -391,7 +414,7 @@ void Solver::doubleSetSinglePointSolver()
             }
             if(!safeCells.isEmpty())
             {
-                if(fieldStatus[(safeCells.last()[0])][(safeCells.last()[1])] == BLANK_CELL)
+                if(game->getFieldStatus((safeCells.last()[0]),(safeCells.last()[1])) == BLANK_CELL)
                 {
                     QThread::msleep(delay);
                 }
@@ -437,7 +460,7 @@ bool Solver::allNeighborsAreFree(int row, int column)
     //Top left
     if ( ((row - 1) != -1 && (column - 1) != -1) )
     {
-        if(fieldStatus[row - 1][column - 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row - 1,column - 1) == FLAGGED_CELL)
         {
             amountOfNeighboursFlagged += 1;
         }
@@ -446,7 +469,7 @@ bool Solver::allNeighborsAreFree(int row, int column)
     //Top center
     if ( (row - 1) != -1)
     {
-        if(fieldStatus[row - 1][column] == FLAGGED_CELL)
+        if(game->getFieldStatus(row - 1,column) == FLAGGED_CELL)
         {
             amountOfNeighboursFlagged += 1;
         }
@@ -455,7 +478,7 @@ bool Solver::allNeighborsAreFree(int row, int column)
     //Top right
     if ( (row - 1) != -1 && (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row - 1][column + 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row - 1,column + 1) == FLAGGED_CELL)
         {
             amountOfNeighboursFlagged += 1;
         }
@@ -464,7 +487,7 @@ bool Solver::allNeighborsAreFree(int row, int column)
     //Left
     if ( (column - 1) != -1)
     {
-        if(fieldStatus[row][column - 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row,column - 1) == FLAGGED_CELL)
         {
             amountOfNeighboursFlagged += 1;
         }
@@ -473,7 +496,7 @@ bool Solver::allNeighborsAreFree(int row, int column)
     //Right
     if ( (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row][column + 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row,column + 1) == FLAGGED_CELL)
         {
             amountOfNeighboursFlagged += 1;
         }
@@ -482,7 +505,7 @@ bool Solver::allNeighborsAreFree(int row, int column)
     //Bottom left
     if ( (row + 1) != fieldHeight && (column - 1) != -1)
     {
-        if(fieldStatus[row + 1][column - 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row + 1,column - 1) == FLAGGED_CELL)
         {
             amountOfNeighboursFlagged += 1;
         }
@@ -491,7 +514,7 @@ bool Solver::allNeighborsAreFree(int row, int column)
     //Bottom center
     if ( (row + 1) != fieldHeight)
     {
-        if(fieldStatus[row + 1][column] == FLAGGED_CELL)
+        if(game->getFieldStatus(row + 1,column) == FLAGGED_CELL)
         {
             amountOfNeighboursFlagged += 1;
         }
@@ -500,13 +523,13 @@ bool Solver::allNeighborsAreFree(int row, int column)
     //Bottom right
     if ( (row + 1) != fieldHeight && (column + 1) != fieldWidth)
     {
-        if(fieldStatus[row + 1][column + 1] == FLAGGED_CELL)
+        if(game->getFieldStatus(row + 1,column + 1) == FLAGGED_CELL)
         {
             amountOfNeighboursFlagged += 1;
         }
     }
 
-    if(/*game->getValue(row, column)*/ mineboard[row][column] == amountOfNeighboursFlagged)
+    if(/*game->getValue(row, column)*/ game->getFieldValue(row,column) == amountOfNeighboursFlagged)
     {
         result = true;
     }
