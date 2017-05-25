@@ -227,7 +227,7 @@ color: rgb(0,0,0);
            <number>2</number>
           </property>
           <property name="maximum">
-           <number>1000</number>
+           <number>3000</number>
           </property>
          </widget>
         </item>
@@ -269,7 +269,7 @@ color: rgb(0,0,0);
            <number>9</number>
           </property>
           <property name="maximum">
-           <number>30</number>
+           <number>50</number>
           </property>
          </widget>
         </item>
@@ -296,7 +296,7 @@ color: rgb(0,0,0);
            <number>9</number>
           </property>
           <property name="maximum">
-           <number>24</number>
+           <number>50</number>
           </property>
          </widget>
         </item>

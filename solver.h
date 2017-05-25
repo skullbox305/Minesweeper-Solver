@@ -1,10 +1,11 @@
 #ifndef SOLVER_H
 #define SOLVER_H
-#define BLANK_CELL 0
-#define FLAGGED_CELL 1
-#define QUESTION_CELL 2
-#define REVEALED_CELL 3
-#define MINE 9
+
+
+#define IS_SAFE 1
+#define IS_UNCERTAIN 2
+#define IS_MINE 3
+
 
 #include <QObject>
 #include <QVector>
@@ -23,35 +24,35 @@ public:
     void stopSolver();
     void resetSolver();
     bool isSolverRunning();
+    bool hasSolvingStarted();
     void bestMove();
     void setDelay(int msec);
-    void setMineBoard(QVector< QVector<int> > _mineboard);
-    void setGameStatus(bool finished);
-    void setFieldStatus(QVector< QVector<int> > fieldStatus);
+    void calculateBestSolution();
 
 private:
-    QVector< QVector<int> > safeCells;
-    QVector< QVector<int> > questionableCells;
+    void naiveSinglePointSolver();
+    void doubleSetSinglePointSolver();
+    void bestMoveSolver();
+    bool allNeighborsAreMines(int row, int column);
+    bool allNeighborsAreFree(int row, int column);
+    bool allUncertainNeighborsAreMines(int row, int column);
+    QVector< QVector<int> > getAllUnmarkedNeighbors(int row, int column);
+    bool isUnmarkedCell(int row, int column); //falls vorher flagge oder ?
 
-    bool hasFinished;
+    QVector< QVector<int> > safeCells;
+    QVector< QVector<int> > questionableCells;    
+
     int fieldHeight;
     int fieldWidth;
     int delay;
     bool solverRunning;
-    bool newGame;
-    QVector< QVector<int> > fieldStatus;
-    QVector< QVector<int> > mineboard;
-
-    void naiveSinglePointSolver();
-    void doubleSetSinglePointSolver();
-    bool allNeighborsAreMines(int row, int column);
-    bool allNeighborsAreFree(int row, int column);
-    QVector< QVector<int> > getAllUnmarkedNeighbors(int row, int column);
+    bool solvingStarted;
 
 signals:
     void probe(QString coordinate);
-    void markCell(int row, int column);
+    void markCell(int row, int column, int markAs);
     void refreshWindow();
+
 };
 
 #endif // SOLVER_H

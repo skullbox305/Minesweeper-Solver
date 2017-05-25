@@ -11,11 +11,6 @@ MineSweeperButton::~MineSweeperButton()
 
 }
 
-//MineSweeperButton::MineSweeperButton(QString blah) : QPushButton(blah)
-//{
-
-//}
-
 /**
   * mousePressEvent(QMouseEvent*)
   * Overrides the mousePressEvent of the QPushButton to enable right clicking

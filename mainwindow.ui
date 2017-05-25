@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1103</width>
-    <height>800</height>
+    <height>900</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -204,7 +204,7 @@ color: rgb(255, 255, 255);</string>
          <x>0</x>
          <y>0</y>
          <width>1103</width>
-         <height>580</height>
+         <height>690</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -359,6 +359,12 @@ border: 1px solid black;
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>150</height>
+               </size>
               </property>
               <property name="font">
                <font>
@@ -655,7 +661,7 @@ border: 1px solid black;
                       </widget>
                      </item>
                      <item row="0" column="0">
-                      <widget class="QLabel" name="label">
+                      <widget class="QLabel" name="label_Algorithm">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -1100,7 +1106,7 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
                        <property name="sizeHint" stdset="0">
                         <size>
                          <width>20</width>
-                         <height>1</height>
+                         <height>0</height>
                         </size>
                        </property>
                       </spacer>
@@ -1113,7 +1119,7 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
                        <property name="sizeHint" stdset="0">
                         <size>
                          <width>20</width>
-                         <height>1</height>
+                         <height>0</height>
                         </size>
                        </property>
                       </spacer>
@@ -1167,6 +1173,12 @@ color: rgb(0,0,0);background-color: rgb(211, 160, 160);</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>150</height>
+               </size>
               </property>
               <property name="font">
                <font>

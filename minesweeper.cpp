@@ -43,8 +43,6 @@ void Minesweeper::initGame()
     hasFinished = false; //Has the game finished?
     hasStarted = false;
     cellsRevealed = 0; //Number of current cells revealed
-    flagsFlagged = 0; //Number of flags that have been flagged
-    minesFlagged = 0; //Number of mines that have been flagged
     hasLost = false;
     hasWon = false;
 
@@ -58,6 +56,13 @@ int Minesweeper::revealCell(int row, int column)
     int result = 0;
 
     fieldStatus[row][column] = REVEALED_CELL;
+
+    QVector <int> x(QVector<int>(2));
+    x[0] = row;
+    x[1] = column;
+
+    //revealedCells.append(x);
+
     cellsRevealed++;
 
     //If we have 90 cells revealed (10 mines, 90 not mines), we win the game!
@@ -98,25 +103,43 @@ bool Minesweeper::gameHasStarted()
     return hasStarted;
 }
 
-void Minesweeper::setFlagCell(int row, int column)
+
+
+void Minesweeper::markAsFlag(int row, int column)
 {
     fieldStatus[row][column] = FLAGGED_CELL;
 }
 
-void Minesweeper::setQuestionCell(int row, int column)
+void Minesweeper::markAsQuestionCell(int row, int column)
 {
     fieldStatus[row][column] = QUESTION_CELL;
 }
 
-void Minesweeper::setBlankCell(int row, int column)
+void Minesweeper::markAsBlankCell(int row, int column)
 {
     fieldStatus[row][column] = BLANK_CELL;
+}
+
+void Minesweeper::markAsMine(int row, int column)
+{
+    fieldStatus[row][column] = MARKED_AS_MINE;
+}
+
+void Minesweeper::markAsSafe(int row, int column)
+{
+    fieldStatus[row][column] = SAFE;
+}
+
+void Minesweeper::markAsUncertain(int row, int column)
+{
+    fieldStatus[row][column] = UNCERTAIN;
 }
 
 void Minesweeper::startGame()
 {
     hasStarted = true;
 }
+
 
 int Minesweeper::getFieldWidth()
 {
@@ -196,28 +219,8 @@ void Minesweeper::generateBoard(bool firstClickSafe, int xFirstClick, int yFirst
         if ( (xCoordinate+1) != fieldHeight && (yCoordinate+1) != fieldWidth && mineBoard[xCoordinate+1][yCoordinate+1] != MINE)
             mineBoard[xCoordinate+1][yCoordinate+1]++;
     }
-
-
 }
 
-
-/**
-  * isMine(int, int)
-  * Determines if there is a mine
-  * @param int - Row to inspect
-  * @param int - Column to inspect
-  * @return bool - Whether or not the location is a mine
-  */
-bool Minesweeper::isMine(int xCoordinate, int yCoordinate)
-{
-    //Ensure the input is sanitary
-    if ( xCoordinate < 0 || xCoordinate > (fieldHeight - 1))
-        qFatal("Error in input");
-    if ( yCoordinate < 0 || yCoordinate > (fieldWidth - 1) )
-        qFatal("Error in input");
-
-    return mineBoard[xCoordinate][yCoordinate] == MINE;
-}
 
 /**
   * getValue(int, int)
@@ -248,8 +251,4 @@ int Minesweeper::getFieldStatus(int row, int column)
     return fieldStatus[row][column];
 }
 
-QVector<QVector<int> > Minesweeper::getMineBoard()
-{
-    return mineBoard;
-}
 
