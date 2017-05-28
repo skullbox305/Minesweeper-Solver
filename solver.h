@@ -9,7 +9,7 @@
 
 #include <QObject>
 #include <QVector>
-#include "time.h"
+#include <QTime>
 #include "minesweeper.h"
 
 class Solver : public QObject
@@ -28,16 +28,14 @@ public:
     void bestMove();
     void setDelay(int msec);
     void calculateBestSolution();
+    void setWithoutButtons();
 
 private:
     void naiveSinglePointSolver();
     void doubleSetSinglePointSolver();
-    void bestMoveSolver();
     bool allNeighborsAreMines(int row, int column);
     bool allNeighborsAreFree(int row, int column);
-    bool allUncertainNeighborsAreMines(int row, int column);
     QVector< QVector<int> > getAllUnmarkedNeighbors(int row, int column);
-    bool isUnmarkedCell(int row, int column); //falls vorher flagge oder ?
 
     QVector< QVector<int> > safeCells;
     QVector< QVector<int> > questionableCells;    
@@ -47,6 +45,7 @@ private:
     int delay;
     bool solverRunning;
     bool solvingStarted;
+    bool withButtons;
 
 signals:
     void probe(QString coordinate);

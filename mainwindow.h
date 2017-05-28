@@ -4,14 +4,17 @@
 #include <iostream>
 #include <QMainWindow>
 #include <QSignalMapper>
+
 #include "minesweeperbutton.h"
 #include "performanceanalysis.h"
 #include "aboutwindow.h"
 #include "helpwindow.h"
 #include "solver.h"
+
 #include <QMessageBox>
 #include <QVector>
-#include <time.h>
+
+#include <QTime>
 
 namespace Ui {
     class MainWindow;
@@ -29,6 +32,7 @@ protected:
 private:
     Ui::MainWindow *ui;
     Solver *so;
+    PerformanceAnalysis *pf;
 
     QSignalMapper *signalMapperLeftClick;
     QSignalMapper *signalMapperRightClick;
@@ -63,17 +67,18 @@ private slots:
     void handleColorLegendClick();
     void setSolverMode();
     void solverControl();
+    void showUserFlags();
     void showSolution();
     void hideSolution();
     void showPerformanceAnalysisWindow();
     void showHelpWindow();
     void showAboutWindow();
     void showMinesIfChecked();
+    void resetFieldStatus();
 
 public slots:
     void markCell(int row, int column, int markAs);
     void refreshWindow();
-
 };
 
 #endif // MAINWINDOW_H

@@ -1,55 +1,59 @@
 #ifndef MINESWEEPER_H
 #define MINESWEEPER_H
 
+#define FLAGGED_CELL 2 //User flag
+#define QUESTION_CELL 3 // User flag
+
 #define BLANK_CELL 0
-#define FLAGGED_CELL 1
-#define QUESTION_CELL 2
-#define REVEALED_CELL 3
-#define MARKED_AS_MINE 4
-#define SAFE 5
-#define UNCERTAIN 6
-#define BEST_GUESS 7
+#define REVEALED_CELL 1
+#define MARKED_AS_MINE 2 //Solver/Best Move  flag
+#define SAFE 3 //Best Move flag
+#define UNCERTAIN 4 //Best move flag
+#define BEST_GUESS 5  //Best move flag
 
 #define MINE 9
 
 #include <QVector>
 #include <QObject>
-#include <time.h>
 
 class Minesweeper
 {
 public:
-    Minesweeper(int width, int height, int mineAmount, QVector< QVector<int> > &board);
     Minesweeper(int width, int height, int mineAmount);
     ~Minesweeper();
-    void generateBoard(bool firstClickSafe, int xFirstClick, int yFirstClick);
+    void generateBoard(bool firstClickSafe, int rowFirstClick, int columnFirstClick);
     int revealCell(int row, int column);
+
 
     //Setter
     void markAsFlag(int row, int column);
     void markAsQuestionCell(int row, int column);
-    void markAsBlankCell(int row, int column);
+    void markAsBlankCell(int row, int column, bool isUserFlag);
     void markAsMine(int row, int column);
     void markAsSafe(int row, int column);
     void markAsUncertain(int row, int column);
     void startGame();
+    void initGame();
 
-    //Getter/Gamestatus
+    //Getter
     int getFieldWidth();
     int getFieldHeight();
     int getFieldValue(int row, int column);
     int getFieldStatus(int row, int column);
+    int getUserFlagStatus(int row, int column);
 
-    bool gameIsLost();
-    bool gameIsWon();
+    //Status
     bool gameHasFinished();
     bool gameHasStarted();
+    bool hasWon();
+    bool hasLost();
+    bool isUnmarkedCell(int row, int column);
 
 private:
     bool hasStarted;
     bool hasFinished;
-    bool hasLost;
-    bool hasWon;
+    bool lost;
+    bool won;
     int cellsRevealed;
 
     int fieldHeight;
@@ -57,10 +61,11 @@ private:
     int amountOfMines;
 
     QVector< QVector<int> > fieldStatus; //BLANK_CELL, FLAGGED_CELL, QUESTION_CELL or REVEALED_CELL
+    QVector< QVector<int> > userFlagStatus;
     QVector< QVector<int> > mineBoard; //Zahl zwischen 0-9. 0-8 ist klar, 9 Mine
 
     void initGameVectors();
-    void initGame();
+
 };
 
 #endif // MINESWEEPER_H

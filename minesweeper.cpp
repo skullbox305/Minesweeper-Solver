@@ -1,26 +1,6 @@
 #include "minesweeper.h"
 #include <QtGlobal>
 
-/**
-  * Constructor
-  * Initializes the board
-  */
-Minesweeper::Minesweeper(int width, int height, int mineAmount, QVector< QVector<int> > &board)
-{
-    fieldHeight = height;
-    fieldWidth = width;
-    amountOfMines = mineAmount;
-    mineBoard = board;
-
-    //Initialize board
-    for(int i = 0; i < fieldHeight; i++)
-    {
-        for ( int j = 0; j < fieldWidth; j++)
-        {
-            mineBoard[i][j] = 0;
-        }
-    }
-}
 
 Minesweeper::Minesweeper(int width, int height, int mineAmount)
 {
@@ -43,8 +23,8 @@ void Minesweeper::initGame()
     hasFinished = false; //Has the game finished?
     hasStarted = false;
     cellsRevealed = 0; //Number of current cells revealed
-    hasLost = false;
-    hasWon = false;
+    lost = false;
+    won = false;
 
     //Create Vectors with the given size
     initGameVectors();
@@ -56,6 +36,7 @@ int Minesweeper::revealCell(int row, int column)
     int result = 0;
 
     fieldStatus[row][column] = REVEALED_CELL;
+    userFlagStatus[row][column] = REVEALED_CELL;
 
     QVector <int> x(QVector<int>(2));
     x[0] = row;
@@ -69,12 +50,12 @@ int Minesweeper::revealCell(int row, int column)
     if (cellsRevealed == ((fieldWidth*fieldHeight) - amountOfMines) && mineBoard[row][column] != MINE)
     {
         result = 1;
-        hasWon = true;
+        won = true;
         hasFinished = true;
     } else if ( mineBoard[row][column] == MINE) //If we reveal a mine, we just lost :(
     {
         result = 2;
-        hasLost = true;
+        lost = true;
         hasFinished = true;
         cellsRevealed--;
     }
@@ -83,15 +64,6 @@ int Minesweeper::revealCell(int row, int column)
     return result;
 }
 
-bool Minesweeper::gameIsLost()
-{
-    return hasLost;
-}
-
-bool Minesweeper::gameIsWon()
-{
-    return hasWon;
-}
 
 bool Minesweeper::gameHasFinished()
 {
@@ -103,21 +75,47 @@ bool Minesweeper::gameHasStarted()
     return hasStarted;
 }
 
+bool Minesweeper::hasWon()
+{
+    return won;
+}
 
+bool Minesweeper::hasLost()
+{
+    return lost;
+}
+
+bool Minesweeper::isUnmarkedCell(int row, int column)
+{
+    bool result = false;
+
+    if(fieldStatus[row][column] == BLANK_CELL || fieldStatus[row][column] == UNCERTAIN)
+    {
+        result = true;
+    }
+    return result;
+}
 
 void Minesweeper::markAsFlag(int row, int column)
 {
-    fieldStatus[row][column] = FLAGGED_CELL;
+    userFlagStatus[row][column] = FLAGGED_CELL;
 }
 
 void Minesweeper::markAsQuestionCell(int row, int column)
 {
-    fieldStatus[row][column] = QUESTION_CELL;
+    userFlagStatus[row][column] = QUESTION_CELL;
 }
 
-void Minesweeper::markAsBlankCell(int row, int column)
+void Minesweeper::markAsBlankCell(int row, int column, bool isUserFlag)
 {
-    fieldStatus[row][column] = BLANK_CELL;
+    if(isUserFlag)
+    {
+        userFlagStatus[row][column] = BLANK_CELL;
+    }
+    else
+    {
+        fieldStatus[row][column] = BLANK_CELL;
+    }
 }
 
 void Minesweeper::markAsMine(int row, int column)
@@ -164,6 +162,7 @@ void Minesweeper::initGameVectors()
             result[i].append(BLANK_CELL);
         }
     }
+    userFlagStatus = result;
     fieldStatus = result;
     mineBoard = result;
 }
@@ -173,51 +172,51 @@ void Minesweeper::initGameVectors()
   * generateBoard()
   * Generates the board with mines and populates the number of mines around it
   */
-void Minesweeper::generateBoard(bool firstClickSafe, int xFirstClick, int yFirstClick)
+void Minesweeper::generateBoard(bool firstClickSafe, int rowFirstClick, int columnFirstClick)
 {
-    qsrand(time(NULL));
+
     //Generate ten mines and create its adjacent number list
     for( int i = 0; i < amountOfMines; i++)
     {
-        int xCoordinate, yCoordinate;
+        int row, column;
 
-        //Prevent generating mine on another mine
         do
         {
-            xCoordinate = qrand() % fieldHeight;
-            yCoordinate = qrand() % fieldWidth;
-        }while ( (mineBoard[xCoordinate][yCoordinate] == MINE) || ( (firstClickSafe && (xCoordinate == xFirstClick) && (yCoordinate == yFirstClick)) ));
+
+            row = qrand() % fieldHeight;
+            column = qrand() % fieldWidth;
+        }while ( (mineBoard[row][column] == MINE) || ( (firstClickSafe && (row == rowFirstClick) && (column == columnFirstClick)) ));
 
 
-        mineBoard[xCoordinate][yCoordinate] = MINE; //Number 9 indiciates a mine
+        mineBoard[row][column] = MINE; //Number 9 indiciates a mine
 
         //Now that we have a mine created, increment its surroundings
         //There are eight of them
 
         //Top left
-        if ( (xCoordinate-1) != -1 && (yCoordinate -1) != -1 && mineBoard[xCoordinate-1][yCoordinate-1] != MINE)
-            mineBoard[xCoordinate-1][yCoordinate-1]++;
+        if ( (row-1) != -1 && (column -1) != -1 && mineBoard[row-1][column-1] != MINE)
+            mineBoard[row-1][column-1]++;
         //Top center
-        if ( (xCoordinate-1) != -1 && mineBoard[xCoordinate-1][yCoordinate] != MINE)
-            mineBoard[xCoordinate-1][yCoordinate]++;
+        if ( (row-1) != -1 && mineBoard[row-1][column] != MINE)
+            mineBoard[row-1][column]++;
         //Top right
-        if ( (xCoordinate-1) != -1 && (yCoordinate + 1) != fieldWidth && mineBoard[xCoordinate-1][yCoordinate+1] != MINE)
-            mineBoard[xCoordinate-1][yCoordinate+1]++;
+        if ( (row-1) != -1 && (column + 1) != fieldWidth && mineBoard[row-1][column+1] != MINE)
+            mineBoard[row-1][column+1]++;
         //Left
-        if ( (yCoordinate -1) != -1 && mineBoard[xCoordinate][yCoordinate-1] != MINE)
-            mineBoard[xCoordinate][yCoordinate-1]++;
+        if ( (column -1) != -1 && mineBoard[row][column-1] != MINE)
+            mineBoard[row][column-1]++;
         //Right
-        if ( (yCoordinate + 1) != fieldWidth && mineBoard[xCoordinate][yCoordinate+1] != MINE)
-            mineBoard[xCoordinate][yCoordinate+1]++;
+        if ( (column + 1) != fieldWidth && mineBoard[row][column+1] != MINE)
+            mineBoard[row][column+1]++;
         //Bottom left
-        if ( (xCoordinate+1) != fieldHeight && (yCoordinate -1) != -1 && mineBoard[xCoordinate+1][yCoordinate-1] != MINE)
-            mineBoard[xCoordinate+1][yCoordinate-1]++;
+        if ( (row+1) != fieldHeight && (column -1) != -1 && mineBoard[row+1][column-1] != MINE)
+            mineBoard[row+1][column-1]++;
         //Bottom center
-        if ( (xCoordinate+1) != fieldHeight && mineBoard[xCoordinate+1][yCoordinate] != MINE)
-            mineBoard[xCoordinate+1][yCoordinate]++;
+        if ( (row+1) != fieldHeight && mineBoard[row+1][column] != MINE)
+            mineBoard[row+1][column]++;
         //Bottom right
-        if ( (xCoordinate+1) != fieldHeight && (yCoordinate+1) != fieldWidth && mineBoard[xCoordinate+1][yCoordinate+1] != MINE)
-            mineBoard[xCoordinate+1][yCoordinate+1]++;
+        if ( (row+1) != fieldHeight && (column+1) != fieldWidth && mineBoard[row+1][column+1] != MINE)
+            mineBoard[row+1][column+1]++;
     }
 }
 
@@ -249,6 +248,17 @@ int Minesweeper::getFieldStatus(int row, int column)
         qFatal("Error in input");
 
     return fieldStatus[row][column];
+}
+
+int Minesweeper::getUserFlagStatus(int row, int column)
+{
+    //Ensure the input is sanitary
+    if ( row < 0 || row > (fieldHeight - 1))
+        qFatal("Error in input");
+    if ( column < 0 || column > (fieldWidth - 1) )
+        qFatal("Error in input");
+
+    return userFlagStatus[row][column];
 }
 
 

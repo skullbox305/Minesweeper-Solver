@@ -28,7 +28,23 @@
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(64, 66, 68);
-</string>
+
+QGroupBox {
+ background-color: rgb(213, 213, 214);
+ color: rgb(0,0,0);
+ border-radius: 5px;
+
+}
+
+QSpinBox{
+background-color: rgb(255, 255, 255);
+color: rgb(0,0,0);
+}
+
+QLabel{
+background-color: rgb(213, 213, 214);
+color: rgb(0,0,0);
+}</string>
   </property>
   <widget class="QStackedWidget" name="stackedWidget">
    <property name="geometry">
@@ -187,14 +203,14 @@ color: rgb(0,0,0);
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QSpinBox" name="spinBox_4">
+         <widget class="QSpinBox" name="spinBox_mineAmount">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
            </font>
           </property>
           <property name="minimum">
-           <number>1</number>
+           <number>0</number>
           </property>
           <property name="maximum">
            <number>667</number>
@@ -217,17 +233,17 @@ color: rgb(0,0,0);
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QSpinBox" name="spinBox_3">
+         <widget class="QSpinBox" name="spinBox_amountOfTestgames">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
            </font>
           </property>
           <property name="minimum">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="maximum">
-           <number>3000</number>
+           <number>10000000</number>
           </property>
          </widget>
         </item>
@@ -256,7 +272,7 @@ color: rgb(0,0,0);
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QSpinBox" name="spinBox">
+         <widget class="QSpinBox" name="spinBox_fieldWidth">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -286,7 +302,7 @@ color: rgb(0,0,0);
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QSpinBox" name="spinBox_2">
+         <widget class="QSpinBox" name="spinBox_fieldHeight">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -423,7 +439,7 @@ color: rgb(0,0,0);
     </widget>
    </widget>
    <widget class="QWidget" name="page_2">
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="groupBox_Result">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -453,7 +469,54 @@ color: rgb(0,0,0);
      <property name="title">
       <string/>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3"/>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_winRate">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Win Rate:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Games won:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_gamesWon">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Games lost:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_gamesLost">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
     <widget class="QToolButton" name="button_Back">
      <property name="geometry">
