@@ -26,9 +26,6 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-protected:
-    void changeEvent(QEvent *e);
-
 private:
     Ui::MainWindow *ui;
     Solver *so;
@@ -54,13 +51,13 @@ private:
     void initMainWindow(bool reinitialize);
     void lost();
     void won();
-    void clear(int, int, bool, bool firstClearRequest);
-    void changeIcon(MineSweeperButton*, int, int);
+    void clear(int row, int column, bool allowedClear, bool firstClearRequest);
+    void changeIcon(MineSweeperButton *buttonPushed, int row, int column);
     void buttonResize();
     void setButtonTooltip(int row, int column, float probability);
 
 private slots:
-    void hasRightClicked(QString);
+    void hasRightClicked(QString coordinates);
     void hasLeftClicked(QString coordinates);
     void reset();
     void showGamemenu();

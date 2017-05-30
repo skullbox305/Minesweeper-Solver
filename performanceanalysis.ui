@@ -56,7 +56,7 @@ color: rgb(0,0,0);
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="page">
     <widget class="QGroupBox" name="groupBox">
@@ -474,13 +474,26 @@ color: rgb(0,0,0);
        <layout class="QGridLayout" name="gridLayout">
         <item row="2" column="1">
          <widget class="QLabel" name="label_winRate">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_11">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Win Rate:</string>
           </property>
@@ -488,6 +501,11 @@ color: rgb(0,0,0);
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_9">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Games won:</string>
           </property>
@@ -495,13 +513,26 @@ color: rgb(0,0,0);
         </item>
         <item row="0" column="1">
          <widget class="QLabel" name="label_gamesWon">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_7">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Games lost:</string>
           </property>
@@ -509,8 +540,16 @@ color: rgb(0,0,0);
         </item>
         <item row="1" column="1">
          <widget class="QLabel" name="label_gamesLost">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>

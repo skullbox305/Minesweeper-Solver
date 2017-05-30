@@ -950,19 +950,3 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-/**
-  * changeEvent()
-  * Changes based on given event
-  */
-void MainWindow::changeEvent(QEvent *e)
-{
-    QMainWindow::changeEvent(e);
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
-}

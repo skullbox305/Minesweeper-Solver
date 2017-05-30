@@ -7,7 +7,7 @@ class MineSweeperButton : public QPushButton
 {
     Q_OBJECT
 public:
-    MineSweeperButton(QWidget* = 0);
+    MineSweeperButton(QWidget* parent = 0);
      ~MineSweeperButton();
     //MineSweeperButton(QString);
 
@@ -15,7 +15,7 @@ signals:
     void rightButtonClicked();
 
 protected:
-    void mousePressEvent(QMouseEvent*);
+    void mousePressEvent(QMouseEvent *qMEvent);
 };
 
 #endif // MINESWEEPERBUTTON_H
